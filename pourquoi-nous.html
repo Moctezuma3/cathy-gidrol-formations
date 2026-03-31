@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pourquoi nous — Cathy Gidrol Formations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --dark-1: #0B162C; --dark-2: #1C2942; --mid: #3B556D;
+      --accent: #5FC2BA; --accent-light: #7DD4CD; --white: #FFFFFF;
+      --gray-light: #F4F7FA;
+      --font-title: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+      --radius-card: 20px; --radius-btn: 50px;
+      --shadow: 0 8px 32px rgba(11,22,44,0.10); --shadow-lg: 0 20px 60px rgba(11,22,44,0.15);
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); color: var(--dark-1); background: var(--white); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(95,194,186,0.12); color: var(--accent); font-family: var(--font-title); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: var(--radius-btn); border: 1px solid rgba(95,194,186,0.25); margin-bottom: 20px; }
+    .section-label::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .title-xl { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; font-family: var(--font-title); line-height: 1.1; }
+    .title-lg { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; font-family: var(--font-title); line-height: 1.15; }
+    .accent-text { color: var(--accent); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-title); font-weight: 600; font-size: 0.95rem; padding: 13px 28px; border-radius: var(--radius-btn); border: 2px solid transparent; cursor: pointer; transition: var(--transition); white-space: nowrap; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: var(--dark-1); }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(95,194,186,0.35); }
+    .btn-secondary { background: var(--dark-1); color: var(--white); }
+    .btn-secondary:hover { background: var(--dark-2); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--accent); border-color: var(--accent); }
+    .btn-outline:hover { background: var(--accent); color: var(--dark-1); transform: translateY(-2px); }
+    .btn-outline-white { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.4); }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: var(--white); transform: translateY(-2px); }
+
+    /* ===== HEADER ===== */
+    .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 0; background: rgba(11,22,44,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.07); transition: var(--transition); }
+    .site-header.scrolled { padding: 10px 0; background: rgba(11,22,44,0.98); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+    .nav-inner { display: flex; align-items: center; gap: 32px; }
+    .logo { flex-shrink: 0; }
+    .logo img { height: 38px; width: auto; }
+    .main-nav { display: flex; gap: 4px; flex: 1; justify-content: center; }
+    .main-nav a { font-family: var(--font-title); font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.75); padding: 8px 14px; border-radius: 8px; transition: var(--transition); }
+    .main-nav a:hover, .main-nav a.active { color: var(--white); background: rgba(255,255,255,0.08); }
+    .main-nav a.active { color: var(--accent); background: rgba(95,194,186,0.12); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .cart-btn { position: relative; display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.8); font-family: var(--font-title); font-size: 0.88rem; font-weight: 500; padding: 8px 14px; border-radius: 10px; transition: var(--transition); background: transparent; border: none; cursor: pointer; }
+    .cart-btn:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+    .cart-count { background: var(--accent); color: var(--dark-1); font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .cart-count.hidden { display: none; }
+    .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+    .burger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--dark-1); padding: 20px; z-index: 999; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a { display: block; padding: 14px 16px; color: rgba(255,255,255,0.85); font-family: var(--font-title); font-size: 1rem; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.06); transition: var(--transition); }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--dark-1); min-height: 70vh; display: flex; align-items: center; padding-top: 80px; position: relative; overflow: hidden; }
+    #heroWebGL { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+    .hero > .container { position: relative; z-index: 1; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 60px; padding: 80px 0; position: relative; z-index: 1; }
+    .hero h1 { color: var(--white); margin-bottom: 20px; }
+    .hero p { font-size: 1.1rem; color: rgba(255,255,255,0.62); line-height: 1.8; }
+    .hero-img-wrap { position: relative; }
+    .hero-img { border-radius: 24px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); }
+    .hero-img img { width: 100%; height: 520px; object-fit: cover; object-position: top center; }
+    .hero-img-badge {
+      position: absolute; bottom: -16px; right: -20px;
+      background: var(--accent); color: var(--dark-1);
+      border-radius: 14px; padding: 14px 20px;
+      font-family: var(--font-title); font-weight: 700; font-size: 0.9rem;
+      box-shadow: 0 16px 40px rgba(95,194,186,0.3);
+    }
+    .hero-img-badge small { display: block; font-size: 0.72rem; font-weight: 500; opacity: 0.75; }
+
+    /* PARCOURS */
+    .parcours-section { background: var(--white); }
+    .parcours-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .parcours-text blockquote {
+      border-left: 3px solid var(--accent); padding-left: 24px;
+      font-size: 1.05rem; color: var(--mid); line-height: 1.8;
+      font-style: italic; margin: 24px 0;
+    }
+    .parcours-text p { color: var(--mid); font-size: 0.97rem; line-height: 1.8; margin-bottom: 16px; }
+    .timeline { margin-top: 32px; display: flex; flex-direction: column; gap: 0; }
+    .timeline-item { display: flex; gap: 20px; padding-bottom: 28px; position: relative; }
+    .timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 15px; top: 30px; bottom: 0; width: 1px; background: linear-gradient(180deg, var(--accent), transparent); }
+    .timeline-dot { width: 30px; height: 30px; background: rgba(95,194,186,0.12); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .timeline-dot::after { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .timeline-content h4 { font-family: var(--font-title); font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .timeline-content p { font-size: 0.85rem; color: var(--mid); line-height: 1.6; }
+    .parcours-img { border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-lg); }
+    .parcours-img img { width: 100%; height: 480px; object-fit: cover; object-position: top center; }
+
+    /* APPORTE */
+    .apporte-section { background: var(--gray-light); }
+    .apporte-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
+    .apporte-card {
+      background: var(--white); border-radius: var(--radius-card); padding: 28px;
+      box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1);
+      transition: var(--transition);
+    }
+    .apporte-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(95,194,186,0.2); }
+    .apporte-icon { width: 48px; height: 48px; background: rgba(95,194,186,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
+    .apporte-card h3 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .apporte-card p { font-size: 0.85rem; color: var(--mid); line-height: 1.65; }
+
+    /* FACON */
+    .facon-section { background: var(--dark-1); position: relative; overflow: hidden; }
+    .facon-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 80% 50%, rgba(95,194,186,0.06) 0%, transparent 70%); pointer-events: none; }
+    .facon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 48px; position: relative; z-index: 1; }
+    .facon-card { background: rgba(28,41,66,0.8); border-radius: var(--radius-card); border: 1px solid rgba(255,255,255,0.07); padding: 32px; transition: var(--transition); }
+    .facon-card:hover { border-color: rgba(95,194,186,0.2); background: var(--dark-2); transform: translateY(-3px); }
+    .facon-num { font-family: var(--font-title); font-size: 0.75rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .facon-card h3 { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+    .facon-card p { font-size: 0.88rem; color: rgba(255,255,255,0.55); line-height: 1.7; }
+
+    /* POURQUOI */
+    .pourquoi-section { background: var(--white); }
+    .pourquoi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 48px; }
+    .pourquoi-card {
+      background: var(--white); border-radius: var(--radius-card); padding: 32px;
+      box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1);
+      transition: var(--transition); display: flex; gap: 20px; align-items: flex-start;
+    }
+    .pourquoi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(95,194,186,0.2); }
+    .pourquoi-num { font-family: var(--font-title); font-size: 2.5rem; font-weight: 800; color: rgba(95,194,186,0.2); line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .pourquoi-content h3 { font-family: var(--font-title); font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .pourquoi-content p { font-size: 0.87rem; color: var(--mid); line-height: 1.65; }
+
+    /* TESTIMONIALS */
+    .testi-section { background: var(--gray-light); }
+    .testi-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 48px; }
+    .testi-card { background: var(--white); border-radius: var(--radius-card); padding: 32px; box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1); transition: var(--transition); }
+    .testi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(95,194,186,0.2); }
+    .testi-stars { color: #FFB020; font-size: 1rem; letter-spacing: 2px; margin-bottom: 16px; }
+    .testi-text { font-size: 0.92rem; color: var(--mid); line-height: 1.75; font-style: italic; margin-bottom: 24px; }
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .testi-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(95,194,186,0.3); }
+    .testi-name { font-family: var(--font-title); font-weight: 700; font-size: 0.95rem; }
+    .testi-role { font-size: 0.8rem; color: var(--mid); }
+
+    /* DOUBLE CTA */
+    .double-cta { background: var(--dark-1); padding: 80px 0; position: relative; overflow: hidden; }
+    .double-cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(95,194,186,0.06) 0%, transparent 70%); pointer-events: none; }
+    .double-cta-inner { text-align: center; position: relative; z-index: 1; }
+    .double-cta h2 { font-family: var(--font-title); font-size: clamp(1.8rem,3.5vw,2.6rem); font-weight: 800; color: var(--white); margin-bottom: 14px; }
+    .double-cta p { color: rgba(255,255,255,0.55); font-size: 1rem; margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .double-cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    .site-footer { background: var(--dark-1); border-top: 1px solid rgba(255,255,255,0.06); padding: 72px 0 32px; position: relative; overflow: hidden; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .footer-brand p { font-size: 0.88rem; color: rgba(255,255,255,0.45); line-height: 1.75; margin-top: 16px; max-width: 280px; }
+    .footer-logo { height: 36px; width: auto; }
+    .footer-col h4 { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.88rem; color: rgba(255,255,255,0.5); transition: var(--transition); }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-contact p { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+    .footer-contact .ac { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 28px; }
+    .footer-bottom p { font-size: 0.82rem; color: rgba(255,255,255,0.3); }
+    .footer-watermark { position: absolute; bottom: 0; right: 0; font-family: var(--font-title); font-size: 8rem; font-weight: 800; color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; user-select: none; }
+
+    @media (max-width: 1024px) {
+      .apporte-grid { grid-template-columns: repeat(2, 1fr); }
+      .facon-grid { grid-template-columns: repeat(2, 1fr); }
+      .pourquoi-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; }
+
+      /* Header */
+      .nav-inner { gap: 12px; }
+      .header-actions { margin-left: auto; }
+      .main-nav { display: none; }
+      .burger { display: flex; }
+
+      /* Hero — stack to 1 column, keep photo visible */
+      .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+      .hero-img img { height: 360px; }
+      .hero-img-badge {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        left: auto;
+      }
+
+      /* Parcours — stack, keep image visible */
+      .parcours-inner { grid-template-columns: 1fr; gap: 40px; }
+      .parcours-img img { height: 300px; }
+
+      /* Ce que j'apporte */
+      .apporte-grid { grid-template-columns: 1fr; }
+
+      /* Ma façon d'accompagner */
+      .facon-grid { grid-template-columns: 1fr; }
+
+      /* Pourquoi nous cards */
+      .pourquoi-grid { grid-template-columns: 1fr; }
+
+      /* Testimonials */
+      .testi-grid-2 { grid-template-columns: 1fr; }
+
+      /* Footer */
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-watermark { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .section { padding: 48px 0; }
+      .container { padding: 0 16px; }
+
+      /* Hero */
+      .hero-inner { padding: 48px 0 32px; }
+      .hero-img img { height: 280px; }
+      .hero-img-badge { padding: 10px 14px; font-size: 0.8rem; }
+
+      /* Parcours */
+      .parcours-img img { height: 240px; }
+      .parcours-text blockquote { padding-left: 16px; font-size: 0.95rem; }
+
+      /* Cards — tighter padding */
+      .apporte-card { padding: 20px; }
+      .facon-card { padding: 22px; }
+      .pourquoi-card { padding: 20px; gap: 12px; }
+      .testi-card { padding: 22px; }
+
+      /* CTA buttons stack */
+      .double-cta-btns { flex-direction: column; align-items: center; }
+
+      /* Footer */
+      .footer-inner { gap: 20px; }
+      /* Shared — FAB + QC modal */
+      .fab-group { bottom: 16px; right: 16px; gap: 8px; }
+      .fab-contact, .fab-cart { width: 44px; height: 44px; font-size: 1rem; }
+      .qc-modal { right: 16px; bottom: 76px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); z-index: 9999; transition: width 0.1s linear; }
+    .cart-overlay { position: fixed; inset: 0; background: rgba(11,22,44,0.55); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(4px); }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--white); z-index: 2001; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; box-shadow: -20px 0 80px rgba(0,0,0,0.25); }
+    .cart-drawer.open { transform: translateX(0); }
+    .drawer-header { padding: 22px 24px 18px; border-bottom: 1px solid rgba(59,85,109,0.1); display: flex; align-items: center; justify-content: space-between; background: var(--dark-1); flex-shrink: 0; }
+    .drawer-header-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-header h3 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--white); }
+    .drawer-header-badge { background: var(--accent); color: var(--dark-1); font-family: var(--font-title); font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+    .drawer-close { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); transition: var(--transition); font-size: 1.1rem; }
+    .drawer-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 16px 24px; scrollbar-width: thin; }
+    .drawer-empty { text-align: center; padding: 52px 16px; }
+    .drawer-empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.35; }
+    .drawer-empty p { color: var(--mid); font-size: 0.9rem; line-height: 1.65; margin-bottom: 20px; }
+    .drawer-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(59,85,109,0.08); }
+    .drawer-item:last-child { border-bottom: none; }
+    .drawer-item-icon { width: 42px; height: 42px; background: rgba(95,194,186,0.1); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .drawer-item-info { flex: 1; min-width: 0; }
+    .drawer-item-tag { font-size: 0.65rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+    .drawer-item-name { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--dark-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+    .drawer-item-price { font-size: 0.78rem; color: var(--mid); margin-top: 1px; }
+    .drawer-item-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .dqty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(59,85,109,0.2); background: var(--white); color: var(--dark-1); font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+    .dqty-btn:hover { background: var(--accent); color: var(--dark-1); border-color: var(--accent); }
+    .dqty-num { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; min-width: 18px; text-align: center; }
+    .drawer-del { background: none; border: none; cursor: pointer; color: rgba(59,85,109,0.35); padding: 4px 6px; border-radius: 6px; transition: var(--transition); font-size: 0.85rem; }
+    .drawer-del:hover { color: #e74c3c; background: rgba(231,76,60,0.08); }
+    .drawer-footer { padding: 18px 24px 20px; border-top: 1px solid rgba(59,85,109,0.1); background: var(--gray-light); flex-shrink: 0; }
+    .drawer-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .drawer-total .lbl { font-family: var(--font-title); font-size: 0.85rem; color: var(--mid); font-weight: 600; }
+    .drawer-total .amt { font-family: var(--font-title); font-size: 1.5rem; font-weight: 800; color: var(--dark-1); }
+    .drawer-note { font-size: 0.73rem; color: var(--mid); line-height: 1.55; margin-bottom: 14px; padding: 10px; background: rgba(95,194,186,0.07); border-radius: 8px; border-left: 2px solid rgba(95,194,186,0.3); }
+    .drawer-cta { width: 100%; justify-content: center; margin-bottom: 8px; }
+    .drawer-clear { background: none; border: none; color: rgba(59,85,109,0.55); font-size: 0.78rem; cursor: pointer; font-family: var(--font-body); text-align: center; width: 100%; padding: 4px; transition: var(--transition); }
+    .drawer-clear:hover { color: #e74c3c; }
+    .fab-group { position: fixed; bottom: 28px; right: 28px; z-index: 1500; display: flex; flex-direction: row; align-items: center; gap: 10px; }
+    .fab-cart { width: 54px; height: 54px; border-radius: 50%; background: var(--dark-1); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(11,22,44,0.5); transition: var(--transition); color: var(--white); position: relative; flex-shrink: 0; }
+    .fab-cart:hover { background: var(--dark-2); transform: scale(1.08); }
+    .fab-cart .fab-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: var(--dark-1); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-title); font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); }
+    .fab-cart .fab-badge.hidden { display: none; }
+    .fab-contact { display: flex; align-items: center; gap: 9px; background: var(--accent); color: var(--dark-1); padding: 13px 20px; border-radius: var(--radius-btn); font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; box-shadow: 0 8px 24px rgba(95,194,186,0.4); cursor: pointer; border: none; transition: var(--transition); white-space: nowrap; animation: pulse-fab 3s ease-in-out infinite; }
+    .fab-contact:hover { background: var(--accent-light); transform: translateY(-3px); animation: none; }
+    @keyframes pulse-fab { 0%,100%{box-shadow:0 8px 24px rgba(95,194,186,0.4);}50%{box-shadow:0 8px 36px rgba(95,194,186,0.65);} }
+    .qc-modal { position: fixed; bottom: 96px; right: 28px; width: 360px; max-width: calc(100vw - 40px); background: var(--white); border-radius: 20px; box-shadow: 0 32px 80px rgba(11,22,44,0.3),0 0 0 1px rgba(59,85,109,0.1); z-index: 2500; overflow: hidden; transform: translateY(16px) scale(0.96); opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s ease; }
+    .qc-modal.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .qc-head { background: var(--dark-1); padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .qc-head-text h4 { font-family: var(--font-title); font-size: 0.97rem; font-weight: 700; color: var(--white); }
+    .qc-head-text p { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .qc-close-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.18); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); font-size: 1rem; transition: var(--transition); flex-shrink: 0; }
+    .qc-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .qc-body { padding: 18px 20px; }
+    .qc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .qc-field { margin-bottom: 12px; }
+    .qc-field label { display: block; font-family: var(--font-title); font-size: 0.75rem; font-weight: 600; color: var(--dark-1); margin-bottom: 5px; }
+    .qc-field input,.qc-field textarea,.qc-field select { width: 100%; padding: 9px 13px; border: 1.5px solid rgba(59,85,109,0.18); border-radius: 9px; font-family: var(--font-body); font-size: 0.87rem; color: var(--dark-1); background: var(--gray-light); outline: none; transition: var(--transition); }
+    .qc-field input:focus,.qc-field textarea:focus,.qc-field select:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 3px rgba(95,194,186,0.1); }
+    .qc-field input.qc-err,.qc-field textarea.qc-err { border-color: #e74c3c; }
+    .qc-field textarea { resize: none; height: 72px; }
+    .qc-submit { width: 100%; justify-content: center; padding: 11px; font-size: 0.9rem; }
+    .qc-success { display: none; text-align: center; padding: 20px 16px 8px; }
+    .qc-success.visible { display: block; }
+    .qc-success-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .qc-success h5 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--dark-1); }
+    .qc-success p { font-size: 0.83rem; color: var(--mid); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo"><img src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol"></a>
+    <nav class="main-nav">
+      <a href="index.html">Accueil</a>
+      <a href="services.html">Services</a>
+      <a href="pourquoi-nous.html" class="active">Pourquoi nous</a>
+      <a href="panier.html">Panier</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" id="cartDrawerTrigger" aria-label="Ouvrir le panier">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-count hidden" id="cartCount">0</span>
+      </button>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Accueil</a>
+  <a href="services.html">Services</a>
+  <a href="pourquoi-nous.html">Pourquoi nous</a>
+  <a href="panier.html">Panier</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" style="color:var(--accent);margin-top:8px;">Prendre contact →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroWebGL"></canvas>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="section-label">Mon histoire</div>
+        <h1 class="title-xl">Un accompagnement qui part <span class="accent-text">du vécu.</span></h1>
+        <p>Je suis Cathy Gidrol, conseillère en insertion professionnelle. J'accompagne les personnes en transition ou reconversion avec une approche à la fois humaine, concrète et orientée résultats — parce que j'ai moi-même traversé ces épreuves.</p>
+      </div>
+      <div class="hero-img-wrap">
+        <div class="hero-img">
+          <img src="./Photo Cathy.jpg" alt="Cathy Gidrol">
+        </div>
+        <div class="hero-img-badge">
+          Conseillère en insertion<br><small>professionnelle · Suisse</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARCOURS -->
+<section class="section parcours-section">
+  <div class="container">
+    <div class="parcours-inner">
+      <div class="parcours-text">
+        <div class="section-label">Mon parcours</div>
+        <h2 class="title-lg">De l'épreuve à <span class="accent-text">l'expertise</span></h2>
+        <blockquote>« Je comprends les difficultés que l'on peut rencontrer dans un parcours professionnel, car j'ai moi-même traversé des périodes de chômage et fait face à un accident de parcours lié à une maladie professionnelle. »</blockquote>
+        <p>Ces expériences m'ont conduite à me réinventer. En m'appuyant sur mes compétences, mon vécu et ma capacité d'adaptation, j'ai réussi ma transition vers le métier de conseillère en insertion professionnelle.</p>
+        <p>Aujourd'hui, ce parcours me permet d'accompagner chaque personne avec une approche à la fois humaine, concrète et orientée résultats.</p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Période de transition professionnelle</h4>
+              <p>Face au chômage et à une maladie professionnelle, j'ai dû faire face à l'incertitude et me reconstruire.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Réinvention et reconversion</h4>
+              <p>J'ai transformé cette épreuve en opportunité — en valorisant mes compétences et en définissant un nouveau cap.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Conseillère en insertion professionnelle</h4>
+              <p>Aujourd'hui, j'accompagne d'autres personnes en transition avec toute mon expertise et mon empathie.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="parcours-img">
+        <img src="./Photo Cathy.jpg" alt="Cathy Gidrol accompagnement">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CE QUE J'APPORTE -->
+<section class="section apporte-section">
+  <div class="container">
+    <div style="text-align:center;max-width:600px;margin:0 auto;">
+      <div class="section-label">Ce que j'apporte</div>
+      <h2 class="title-lg">Les outils pour avancer <span class="accent-text">avec clarté</span></h2>
+      <p style="color:var(--mid);font-size:0.97rem;line-height:1.75;margin:16px auto 0;">Un accompagnement personnalisé et ciblé pour vous aider à avancer avec clarté et confiance dans votre projet professionnel.</p>
+    </div>
+    <div class="apporte-grid">
+      <div class="apporte-card">
+        <div class="apporte-icon">📝</div>
+        <h3>CV percutant</h3>
+        <p>Construction d'un CV adapté au marché suisse qui valorise votre profil et attire l'attention des recruteurs.</p>
+      </div>
+      <div class="apporte-card">
+        <div class="apporte-icon">✉️</div>
+        <h3>Lettre de motivation</h3>
+        <p>Rédaction d'une lettre de motivation qui vous distingue et met en avant votre valeur ajoutée.</p>
+      </div>
+      <div class="apporte-card">
+        <div class="apporte-icon">🎤</div>
+        <h3>Présentation personnelle</h3>
+        <p>Amélioration de votre pitch pour vous exprimer avec assurance et laisser une impression mémorable.</p>
+      </div>
+      <div class="apporte-card">
+        <div class="apporte-icon">🎯</div>
+        <h3>Préparation aux entretiens</h3>
+        <p>Techniques et stratégies pour aborder chaque entretien avec confiance et décrocher le poste souhaité.</p>
+      </div>
+      <div class="apporte-card">
+        <div class="apporte-icon">🔄</div>
+        <h3>Simulations d'entretien</h3>
+        <p>Entraînements réalistes pour anticiper les questions difficiles et répondre avec aisance.</p>
+      </div>
+      <div class="apporte-card">
+        <div class="apporte-icon">🗺️</div>
+        <h3>Stratégie personnalisée</h3>
+        <p>Définition d'une stratégie claire et efficace pour atteindre vos objectifs professionnels durables.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MA FAÇON D'ACCOMPAGNER -->
+<section class="section facon-section">
+  <div class="facon-bg"></div>
+  <div class="container">
+    <div style="text-align:center;max-width:600px;margin:0 auto;position:relative;z-index:1;">
+      <div class="section-label">Ma méthode</div>
+      <h2 class="title-lg" style="color:var(--white);">Ma façon d'<span class="accent-text">accompagner</span></h2>
+      <p style="color:rgba(255,255,255,0.55);font-size:0.97rem;line-height:1.75;margin:16px auto 0;">Mon approche combine compréhension humaine et expertise concrète pour des résultats réels et durables.</p>
+    </div>
+    <div class="facon-grid">
+      <div class="facon-card">
+        <div class="facon-num">01 — Écoute</div>
+        <h3>Compréhension humaine</h3>
+        <p>J'écoute d'abord votre histoire, vos aspirations et vos blocages sans jugement. Chaque situation est unique et mérite une attention totale.</p>
+      </div>
+      <div class="facon-card">
+        <div class="facon-num">02 — Expertise</div>
+        <h3>Expertise concrète</h3>
+        <p>Je m'appuie sur une expertise concrète en accompagnement vers l'emploi, avec une connaissance approfondie du marché suisse et de ses spécificités.</p>
+      </div>
+      <div class="facon-card">
+        <div class="facon-num">03 — Personnalisation</div>
+        <h3>Approche sur mesure</h3>
+        <p>Je ne propose pas de solutions standardisées. Ensemble, nous construisons des stratégies adaptées à votre parcours, vos forces et vos ambitions.</p>
+      </div>
+      <div class="facon-card">
+        <div class="facon-num">04 — Action</div>
+        <h3>Conseils applicables</h3>
+        <p>Des recommandations pratiques, applicables immédiatement — pas de la théorie, mais des outils concrets pour passer à l'action et obtenir des résultats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POURQUOI TRAVAILLER AVEC MOI -->
+<section class="section pourquoi-section">
+  <div class="container">
+    <div style="text-align:center;max-width:580px;margin:0 auto;">
+      <div class="section-label">Les avantages</div>
+      <h2 class="title-lg">Pourquoi travailler <span class="accent-text">avec moi ?</span></h2>
+      <p style="color:var(--mid);font-size:0.97rem;line-height:1.75;margin:16px auto 0;">Parce que je ne propose pas un accompagnement standardisé. Je mets à votre service mon expérience de terrain, mon sens de l'écoute et ma volonté de vous aider.</p>
+    </div>
+    <div class="pourquoi-grid">
+      <div class="pourquoi-card">
+        <div class="pourquoi-num">1</div>
+        <div class="pourquoi-content">
+          <h3>Expérience vécue de l'intérieur</h3>
+          <p>J'ai moi-même traversé des transitions professionnelles difficiles. Je comprends vos doutes, vos peurs et vos aspirations — pas seulement en théorie.</p>
+        </div>
+      </div>
+      <div class="pourquoi-card">
+        <div class="pourquoi-num">2</div>
+        <div class="pourquoi-content">
+          <h3>Réseau de 30+ partenaires recruteurs</h3>
+          <p>Accès direct à un réseau qualifié d'agences de placement et d'entreprises partenaires principalement à Genève et dans le canton de Vaud.</p>
+        </div>
+      </div>
+      <div class="pourquoi-card">
+        <div class="pourquoi-num">3</div>
+        <div class="pourquoi-content">
+          <h3>Stratégies sur mesure, pas de templates</h3>
+          <p>Chaque CV, chaque stratégie, chaque coaching est pensé spécifiquement pour vous — votre parcours, vos forces, votre marché cible.</p>
+        </div>
+      </div>
+      <div class="pourquoi-card">
+        <div class="pourquoi-num">4</div>
+        <div class="pourquoi-content">
+          <h3>Ancrage suisse et connaissance locale</h3>
+          <p>Expertise du marché de l'emploi en Suisse romande — codes culturels, attentes des recruteurs, spécificités du marché genevois et vaudois.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TÉMOIGNAGES -->
+<section class="section testi-section">
+  <div class="container">
+    <div style="text-align:center;max-width:560px;margin:0 auto;">
+      <div class="section-label">Témoignages</div>
+      <h2 class="title-lg">Ils ont fait <span class="accent-text">confiance</span></h2>
+    </div>
+    <div class="testi-grid-2">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« J'ai eu la chance exceptionnelle de rencontrer Cathy Gidrol lors d'un événement de réseautage à Genève. Son approche, profondément humaine, m'a tout de suite mise en confiance. Elle possède un réel talent pour saisir le potentiel unique de chaque personne et transformer ce potentiel en outils concrets, adaptés aux objectifs professionnels visés. »</p>
+        <div class="testi-author">
+          <img class="testi-photo" src="./temoignages/Karla-Chacon.png" alt="Karla Chacon">
+          <div><div class="testi-name">Karla Chacon</div><div class="testi-role">Architecte d'intérieur</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« Après une période de transition professionnelle marquée par une perte d'emploi, Cathy se distingue par ses valeurs humaines profondes, alliant écoute attentive et professionnalisme rigoureux. Sa capacité à conjuguer bienveillance et expertise en fait une véritable partenaire de développement personnel et professionnel. »</p>
+        <div class="testi-author">
+          <img class="testi-photo" src="./temoignages/Mathieu-Lhermitte-scaled.jpg" alt="Mathieu Lhermitte">
+          <div><div class="testi-name">Mathieu Lhermitte</div><div class="testi-role">Chef de projet</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOUBLE CTA -->
+<section class="double-cta">
+  <div class="double-cta-bg"></div>
+  <div class="container">
+    <div class="double-cta-inner">
+      <div class="section-label" style="margin:0 auto 20px;display:inline-flex;">Prêt à avancer ?</div>
+      <h2>Commençons ensemble votre transformation</h2>
+      <p>Découvrez les services adaptés à votre situation ou prenez contact pour un premier échange offert de 30 minutes.</p>
+      <div class="double-cta-btns">
+        <a href="services.html" class="btn btn-primary">Voir les services</a>
+        <a href="contact.html" class="btn btn-outline-white">Prendre contact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="footer-logo" src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol">
+        <p>Conseillère en insertion professionnelle basée en Suisse. Accompagnement humain, concret et orienté résultats.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pourquoi-nous.html">Pourquoi nous</a></li>
+          <li><a href="panier.html">Panier</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">CV & Lettre</a></li>
+          <li><a href="services.html">Coaching complet</a></li>
+          <li><a href="services.html">Bilan de compétences</a></li>
+          <li><a href="services.html">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-contact">
+        <h4>Contact</h4>
+        <p>📍 Genève & canton de Vaud</p>
+        <p>🇨🇭 Suisse</p>
+        <p class="ac">Premier échange gratuit de 30 min</p>
+        <a href="contact.html" class="btn btn-outline" style="margin-top:16px;padding:10px 20px;font-size:0.85rem;">Nous contacter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Cathy Gidrol — Tous droits réservés</p>
+      <p>Insertion professionnelle · Genève · Vaud · Suisse</p>
+    </div>
+    <div class="footer-watermark">CG</div>
+  </div>
+</footer>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <div class="drawer-header-left"><h3>Mon panier</h3><span class="drawer-header-badge" id="drawerBadge">0</span></div>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div class="drawer-empty" id="drawerEmpty">
+      <div class="drawer-empty-icon">🛒</div>
+      <p>Votre panier est vide.<br>Découvrez mes services et ajoutez vos prestations.</p>
+      <a href="services.html" class="btn btn-primary" style="font-size:0.88rem;padding:10px 22px;">Voir les services</a>
+    </div>
+  </div>
+  <div class="drawer-footer" id="drawerFooter" style="display:none;">
+    <div class="drawer-total"><span class="lbl">Total estimé</span><span class="amt" id="drawerTotal">0 CHF</span></div>
+    <p class="drawer-note">💡 Aucun paiement en ligne — ce panier prépare notre échange.</p>
+    <a href="contact.html" class="btn btn-primary drawer-cta"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.69 12 19.79 19.79 0 011.61 3.18 2 2 0 013.6 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.64a16 16 0 006.29 6.29l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Prendre contact</a>
+    <a href="panier.html" style="display:block;text-align:center;font-family:var(--font-title);font-size:0.8rem;color:var(--mid);margin-top:6px;text-decoration:underline;">Voir le panier complet</a>
+    <button class="drawer-clear" id="drawerClear">Vider le panier</button>
+  </div>
+</div>
+<div class="fab-group" id="fabGroup">
+  <button class="fab-contact" id="fabContact"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Contact rapide</button>
+  <button class="fab-cart" id="fabCart" aria-label="Panier"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="fab-badge hidden" id="fabBadge">0</span></button>
+</div>
+<div class="qc-modal" id="qcModal">
+  <div class="qc-head"><div class="qc-head-text"><h4>Contact rapide</h4><p>🎁 Premier échange de 30 min offert</p></div><button class="qc-close-btn" id="qcClose">✕</button></div>
+  <div class="qc-body">
+    <form id="qcForm" novalidate>
+      <div class="qc-row"><div class="qc-field"><label>Prénom *</label><input type="text" id="qcPrenom" placeholder="Votre prénom"></div><div class="qc-field"><label>Email *</label><input type="email" id="qcEmail" placeholder="votre@email.com"></div></div>
+      <div class="qc-field"><label>Service souhaité</label><select id="qcService"><option value="">— Sélectionner —</option><option>CV & Lettre de motivation</option><option>Coaching complet</option><option>Bilan de compétences</option><option>LinkedIn</option><option>Je ne sais pas encore</option></select></div>
+      <div class="qc-field"><label>Message rapide *</label><textarea id="qcMessage" placeholder="Décrivez brièvement votre situation..."></textarea></div>
+      <button type="submit" class="btn btn-primary qc-submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Envoyer</button>
+    </form>
+    <div class="qc-success" id="qcSuccess"><div class="qc-success-icon">✅</div><h5>Message envoyé !</h5><p>Je vous recontacte très vite pour fixer notre premier échange offert.</p></div>
+  </div>
+</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  function cartGet() { try { return JSON.parse(localStorage.getItem('cg_cart')) || []; } catch(e) { return []; } }
+  function cartCount() { return cartGet().reduce((s, i) => s + (i.quantite || 1), 0); }
+  function updateCartBadge() {
+    const n = cartCount(), el = document.getElementById('cartCount');
+    if (!el) return; el.textContent = n; el.classList.toggle('hidden', n === 0);
+  }
+  updateCartBadge();
+
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 60), { passive: true });
+  document.getElementById('burger').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
+
+  // Animations
+  gsap.from('.site-header', { y: -80, opacity: 0, duration: 0.8, ease: 'power3.out' });
+  gsap.from('.hero-inner > *', { y: 50, opacity: 0, duration: 0.9, stagger: 0.2, ease: 'power3.out', delay: 0.3 });
+
+  gsap.utils.toArray('.apporte-card, .facon-card, .pourquoi-card, .testi-card').forEach((el, i) => {
+    gsap.from(el, { y: 50, opacity: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true }, delay: (i % 3) * 0.08 });
+  });
+
+  gsap.from('.parcours-inner > *', { y: 40, opacity: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out', scrollTrigger: { trigger: '.parcours-inner', start: 'top 80%', once: true } });
+  gsap.from('.timeline-item', { x: -30, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power3.out', scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true } });
+  gsap.from('.double-cta-inner > *', { y: 30, opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out', scrollTrigger: { trigger: '.double-cta', start: 'top 85%', once: true } });
+
+  const catIcons={'CV':'📄','Coaching':'🎯','Bilan de compétences':'🔍','LinkedIn':'💼'};
+  function cartGet(){try{return JSON.parse(localStorage.getItem('cg_cart'))||[];}catch(e){return[];}}
+  function cartSave(items){localStorage.setItem('cg_cart',JSON.stringify(items));}
+  function cartCount(){return cartGet().reduce((s,i)=>s+(i.quantite||1),0);}
+  function updateAllBadges(){const n=cartCount();['cartCount','drawerBadge','fabBadge'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent=n;el.classList.toggle('hidden',n===0);if(id==='drawerBadge')el.style.display=n>0?'':'none';});}
+  updateAllBadges();
+  function renderDrawer(){const items=cartGet(),body=document.getElementById('drawerBody'),footer=document.getElementById('drawerFooter'),empty=document.getElementById('drawerEmpty');if(!body)return;body.querySelectorAll('.drawer-item').forEach(el=>el.remove());if(items.length===0){if(empty)empty.style.display='';if(footer)footer.style.display='none';updateAllBadges();return;}if(empty)empty.style.display='none';if(footer)footer.style.display='';let total=0;items.forEach(item=>{const qty=item.quantite||1;total+=item.prix*qty;const div=document.createElement('div');div.className='drawer-item';div.innerHTML=`<div class="drawer-item-icon">${catIcons[item.categorie]||'📋'}</div><div class="drawer-item-info"><div class="drawer-item-tag">${item.categorie}</div><div class="drawer-item-name">${item.titre}</div><div class="drawer-item-price">${item.prix} CHF / unité</div></div><div class="drawer-item-actions"><button class="dqty-btn" onclick="drawerQty('${item.id}',-1)">−</button><span class="dqty-num">${qty}</span><button class="dqty-btn" onclick="drawerQty('${item.id}',1)">+</button><button class="drawer-del" onclick="drawerRemove('${item.id}')" title="Supprimer">🗑</button></div>`;body.appendChild(div);});const totalEl=document.getElementById('drawerTotal');if(totalEl){const prev=parseInt(totalEl.textContent)||0;gsap.to({val:prev},{val:total,duration:0.5,ease:'power2.out',onUpdate:function(){totalEl.textContent=Math.round(this.targets()[0].val)+' CHF';}});}updateAllBadges();}
+  function drawerQty(id,delta){let items=cartGet();const idx=items.findIndex(i=>i.id===id);if(idx<0)return;items[idx].quantite=Math.max(1,(items[idx].quantite||1)+delta);cartSave(items);renderDrawer();}
+  function drawerRemove(id){cartSave(cartGet().filter(i=>i.id!==id));renderDrawer();}
+  function openDrawer(){renderDrawer();document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartDrawer').classList.add('open');document.body.style.overflow='hidden';}
+  function closeDrawer(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('cartDrawerTrigger').addEventListener('click',openDrawer);
+  document.getElementById('fabCart').addEventListener('click',openDrawer);
+  document.getElementById('drawerClose').addEventListener('click',closeDrawer);
+  document.getElementById('cartOverlay').addEventListener('click',closeDrawer);
+  document.getElementById('drawerClear').addEventListener('click',()=>{if(confirm('Vider le panier ?')){cartSave([]);renderDrawer();}});
+  const qcModal=document.getElementById('qcModal');
+  function openQC(){qcModal.classList.add('open');}
+  function closeQC(){qcModal.classList.remove('open');}
+  document.getElementById('fabContact').addEventListener('click',openQC);
+  document.getElementById('qcClose').addEventListener('click',closeQC);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeQC();}});
+  document.getElementById('qcForm').addEventListener('submit',function(e){e.preventDefault();const prenom=document.getElementById('qcPrenom').value.trim(),email=document.getElementById('qcEmail').value.trim(),msg=document.getElementById('qcMessage').value.trim(),rx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;let ok=true;[document.getElementById('qcPrenom'),document.getElementById('qcEmail'),document.getElementById('qcMessage')].forEach(el=>el.classList.remove('qc-err'));if(!prenom){document.getElementById('qcPrenom').classList.add('qc-err');ok=false;}if(!email||!rx.test(email)){document.getElementById('qcEmail').classList.add('qc-err');ok=false;}if(!msg){document.getElementById('qcMessage').classList.add('qc-err');ok=false;}if(!ok)return;setTimeout(()=>{document.getElementById('qcForm').style.display='none';const s=document.getElementById('qcSuccess');s.classList.add('visible');gsap.from(s.children,{y:16,opacity:0,duration:0.5,stagger:0.1,ease:'power3.out'});setTimeout(closeQC,3500);},800);});
+  const progressBar=document.getElementById('scrollProgress');
+  window.addEventListener('scroll',()=>{const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;if(progressBar)progressBar.style.width=pct+'%';},{passive:true});
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+  document.getElementById('burger').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('open'));
+</script>
+
+<script>
+/* ===== THREE.JS HERO LIQUID GRADIENT ===== */
+(function() {
+  if (typeof THREE === 'undefined') return;
+  const canvas = document.getElementById('heroWebGL');
+  const hero   = canvas.closest('.hero');
+  class TouchTexture {
+    constructor() { this.size=64; this.maxAge=100; this.radius=0.18; this.trail=[]; this._init(); }
+    _init() {
+      this.cvs=document.createElement('canvas'); this.cvs.width=this.cvs.height=this.size;
+      this.ctx=this.cvs.getContext('2d'); this.ctx.fillStyle='black';
+      this.ctx.fillRect(0,0,this.size,this.size); this.texture=new THREE.CanvasTexture(this.cvs);
+    }
+    addTouch(pt) { this.trail.push({x:pt.x,y:pt.y,age:0}); }
+    update() {
+      this.ctx.fillStyle='rgba(0,0,0,0.05)'; this.ctx.fillRect(0,0,this.size,this.size);
+      this.trail=this.trail.filter(p=>p.age<=this.maxAge);
+      this.trail.forEach(p=>{ p.age++; const i=Math.pow(1-p.age/this.maxAge,1.5);
+        this.ctx.beginPath(); this.ctx.arc(p.x*this.size,p.y*this.size,this.size*this.radius,0,Math.PI*2);
+        this.ctx.fillStyle=`rgba(255,255,255,${i*0.55})`; this.ctx.fill(); });
+      this.texture.needsUpdate=true;
+    }
+  }
+  const vertexShader=`varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position,1.0);}`;
+  const fragmentShader=`
+    precision mediump float;
+    uniform float uTime; uniform vec2 uRes; uniform sampler2D uTouch; varying vec2 vUv;
+    vec3 cNavy=vec3(0.043,0.086,0.173); vec3 cMid=vec3(0.110,0.161,0.259); vec3 cTeal=vec3(0.373,0.761,0.729);
+    float blob(vec2 uv,vec2 c,float r){return r/(dot(uv-c,uv-c)+0.001);}
+    void main(){
+      vec2 uv=vUv; float t=uTime*0.22; float f=0.0;
+      f+=blob(uv,vec2(0.50+0.30*sin(t*0.70),0.50+0.25*cos(t*0.50)),0.018);
+      f+=blob(uv,vec2(0.20+0.18*cos(t*0.60),0.30+0.22*sin(t*0.80)),0.013);
+      f+=blob(uv,vec2(0.75+0.17*sin(t*0.55+1.5),0.65+0.20*cos(t*0.70)),0.015);
+      f+=blob(uv,vec2(0.15+0.12*cos(t*0.90+0.5),0.75+0.16*sin(t*0.40)),0.012);
+      f+=blob(uv,vec2(0.80+0.13*sin(t*0.65+2.0),0.25+0.18*cos(t*0.75)),0.013);
+      f+=blob(uv,vec2(0.45+0.22*cos(t*0.45+1.0),0.90+0.08*sin(t*1.20)),0.014);
+      f+=blob(uv,vec2(0.60+0.20*sin(t*0.80+0.8),0.15+0.12*cos(t*0.55)),0.011);
+      f+=blob(uv,vec2(0.35+0.15*cos(t*0.50+2.5),0.55+0.20*sin(t*0.60+1.0)),0.010);
+      f+=blob(uv,vec2(0.88+0.08*sin(t*1.10+0.3),0.50+0.25*cos(t*0.45+0.7)),0.009);
+      f+=blob(uv,vec2(0.08+0.07*cos(t*0.75+1.2),0.45+0.18*sin(t*0.85)),0.009);
+      f+=blob(uv,vec2(0.55+0.18*sin(t*0.60+3.0),0.38+0.15*cos(t*0.95+0.5)),0.010);
+      f+=blob(uv,vec2(0.30+0.20*cos(t*0.40+0.9),0.80+0.10*sin(t*0.70+2.0)),0.011);
+      float lo=smoothstep(0.35,0.90,f); float hi=smoothstep(0.90,2.00,f);
+      vec3 col=mix(cNavy,cMid,lo*0.7); col=mix(col,cTeal,hi*0.38);
+      col=mix(col,cNavy,0.35);
+      float touch=texture2D(uTouch,uv).r; col+=touch*0.08*cTeal;
+      float vig=1.0-smoothstep(0.30,0.85,length(uv-vec2(0.5)));
+      col=mix(cNavy*0.65,col,vig*0.65+0.35);
+      gl_FragColor=vec4(col,1.0);
+    }`;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  const scene=new THREE.Scene(), camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1), touch=new TouchTexture();
+  const uniforms={uTime:{value:0},uRes:{value:new THREE.Vector2()},uTouch:{value:touch.texture}};
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({vertexShader,fragmentShader,uniforms})));
+  function resize(){const w=hero.clientWidth,h=hero.clientHeight;renderer.setSize(w,h,false);uniforms.uRes.value.set(w,h);}
+  resize(); window.addEventListener('resize',resize);
+  hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();touch.addTouch({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height});});
+  hero.addEventListener('touchmove',e=>{const r=hero.getBoundingClientRect();Array.from(e.touches).forEach(t=>touch.addTouch({x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height}));},{passive:true});
+  (function loop(){requestAnimationFrame(loop);uniforms.uTime.value+=0.016;touch.update();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>

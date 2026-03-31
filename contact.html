@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Cathy Gidrol Formations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --dark-1: #0B162C; --dark-2: #1C2942; --mid: #3B556D;
+      --accent: #5FC2BA; --accent-light: #7DD4CD; --white: #FFFFFF;
+      --gray-light: #F4F7FA;
+      --font-title: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+      --radius-card: 20px; --radius-btn: 50px;
+      --shadow: 0 8px 32px rgba(11,22,44,0.10); --shadow-lg: 0 20px 60px rgba(11,22,44,0.15);
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); color: var(--dark-1); background: var(--white); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(95,194,186,0.12); color: var(--accent); font-family: var(--font-title); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: var(--radius-btn); border: 1px solid rgba(95,194,186,0.25); margin-bottom: 20px; }
+    .section-label::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .accent-text { color: var(--accent); }
+    .title-xl { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 800; font-family: var(--font-title); line-height: 1.1; }
+    .title-lg { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 700; font-family: var(--font-title); line-height: 1.15; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-title); font-weight: 600; font-size: 0.95rem; padding: 13px 28px; border-radius: var(--radius-btn); border: 2px solid transparent; cursor: pointer; transition: var(--transition); white-space: nowrap; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: var(--dark-1); }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(95,194,186,0.35); }
+    .btn-secondary { background: var(--dark-1); color: var(--white); }
+    .btn-secondary:hover { background: var(--dark-2); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--accent); border-color: var(--accent); }
+    .btn-outline:hover { background: var(--accent); color: var(--dark-1); transform: translateY(-2px); }
+
+    /* ===== HEADER ===== */
+    .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 0; background: rgba(11,22,44,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.07); transition: var(--transition); }
+    .site-header.scrolled { padding: 10px 0; background: rgba(11,22,44,0.98); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+    .nav-inner { display: flex; align-items: center; gap: 32px; }
+    .logo { flex-shrink: 0; }
+    .logo img { height: 38px; width: auto; }
+    .main-nav { display: flex; gap: 4px; flex: 1; justify-content: center; }
+    .main-nav a { font-family: var(--font-title); font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.75); padding: 8px 14px; border-radius: 8px; transition: var(--transition); }
+    .main-nav a:hover, .main-nav a.active { color: var(--white); background: rgba(255,255,255,0.08); }
+    .main-nav a.active { color: var(--accent); background: rgba(95,194,186,0.12); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .cart-btn { position: relative; display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.8); font-family: var(--font-title); font-size: 0.88rem; font-weight: 500; padding: 8px 14px; border-radius: 10px; transition: var(--transition); background: transparent; border: none; cursor: pointer; }
+    .cart-btn:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+    .cart-count { background: var(--accent); color: var(--dark-1); font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .cart-count.hidden { display: none; }
+    .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+    .burger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--dark-1); padding: 20px; z-index: 999; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a { display: block; padding: 14px 16px; color: rgba(255,255,255,0.85); font-family: var(--font-title); font-size: 1rem; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.06); transition: var(--transition); }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--dark-1); padding: 130px 0 80px; position: relative; overflow: hidden; }
+    #heroWebGL { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+    .hero > .container { position: relative; z-index: 1; }
+    .hero-content { text-align: center; max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+    .hero h1 { color: var(--white); margin-bottom: 16px; }
+    .hero p { color: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.75; margin-bottom: 32px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(95,194,186,0.1); border: 1px solid rgba(95,194,186,0.25); border-radius: 14px; padding: 12px 20px; color: var(--accent); font-family: var(--font-title); font-size: 0.9rem; font-weight: 600; }
+
+    /* CONTACT SECTION */
+    .contact-section { padding: 80px 0 96px; }
+    .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+
+    /* FORM */
+    .form-card { background: var(--white); border-radius: var(--radius-card); padding: 40px; box-shadow: var(--shadow-lg); border: 1px solid rgba(59,85,109,0.1); }
+    .form-card h2 { font-family: var(--font-title); font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+    .form-card > p { color: var(--mid); font-size: 0.9rem; margin-bottom: 28px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-family: var(--font-title); font-size: 0.82rem; font-weight: 600; color: var(--dark-1); letter-spacing: 0.03em; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 12px 16px; border: 1.5px solid rgba(59,85,109,0.2);
+      border-radius: 12px; font-family: var(--font-body); font-size: 0.92rem;
+      color: var(--dark-1); background: var(--gray-light);
+      transition: var(--transition); outline: none; width: 100%;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--accent); background: var(--white);
+      box-shadow: 0 0 0 3px rgba(95,194,186,0.12);
+    }
+    .form-group input.error, .form-group select.error, .form-group textarea.error {
+      border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-group select { cursor: pointer; }
+    .form-error { font-size: 0.78rem; color: #e74c3c; margin-top: 2px; display: none; }
+    .form-error.visible { display: block; }
+    .form-submit { margin-top: 24px; width: 100%; justify-content: center; padding: 15px; font-size: 1rem; }
+    .form-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none !important; }
+
+    /* SUCCESS STATE */
+    .form-success { display: none; text-align: center; padding: 40px 20px; }
+    .form-success.visible { display: flex; flex-direction: column; align-items: center; }
+    .success-icon { width: 72px; height: 72px; background: rgba(95,194,186,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 20px; border: 2px solid rgba(95,194,186,0.3); }
+    .form-success h3 { font-family: var(--font-title); font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+    .form-success p { color: var(--mid); font-size: 0.95rem; line-height: 1.7; max-width: 340px; }
+
+    /* RIGHT SIDE */
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+    .info-card { background: var(--white); border-radius: var(--radius-card); padding: 28px; box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1); display: flex; align-items: flex-start; gap: 18px; transition: var(--transition); }
+    .info-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(95,194,186,0.2); }
+    .info-icon { width: 52px; height: 52px; background: rgba(95,194,186,0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .info-content h4 { font-family: var(--font-title); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .info-content p { font-size: 0.88rem; color: var(--mid); line-height: 1.6; }
+    .info-content strong { color: var(--accent); }
+
+    /* FAQ */
+    .faq-section { background: var(--gray-light); padding: 80px 0; }
+    .faq-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; }
+    .faq-intro h2 { margin-bottom: 16px; }
+    .faq-intro p { color: var(--mid); font-size: 0.95rem; line-height: 1.75; margin-bottom: 28px; }
+    .faq-list { display: flex; flex-direction: column; gap: 0; }
+    .faq-item { border-bottom: 1px solid rgba(59,85,109,0.12); }
+    .faq-question {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; gap: 16px;
+      font-family: var(--font-title); font-size: 0.97rem; font-weight: 600;
+      color: var(--dark-1); text-align: left; transition: var(--transition);
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question.open { color: var(--accent); }
+    .faq-arrow { flex-shrink: 0; width: 28px; height: 28px; background: rgba(95,194,186,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .faq-question.open .faq-arrow { background: var(--accent); transform: rotate(45deg); }
+    .faq-answer {
+      overflow: hidden; height: 0;
+      font-size: 0.9rem; color: var(--mid); line-height: 1.75;
+      transition: height 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .faq-answer-inner { padding: 0 0 20px; }
+
+    /* CTA BACK */
+    .cta-back { padding: 80px 0; text-align: center; }
+    .cta-back h2 { font-family: var(--font-title); font-size: clamp(1.5rem,2.5vw,2rem); font-weight: 700; margin-bottom: 12px; }
+    .cta-back p { color: var(--mid); margin-bottom: 28px; font-size: 0.97rem; }
+
+    /* FOOTER */
+    .site-footer { background: var(--dark-1); padding: 72px 0 32px; position: relative; overflow: hidden; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .footer-brand p { font-size: 0.88rem; color: rgba(255,255,255,0.45); line-height: 1.75; margin-top: 16px; max-width: 280px; }
+    .footer-logo { height: 36px; width: auto; }
+    .footer-col h4 { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.88rem; color: rgba(255,255,255,0.5); transition: var(--transition); }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-contact-block p { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+    .footer-contact-block .ac { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 28px; }
+    .footer-bottom p { font-size: 0.82rem; color: rgba(255,255,255,0.3); }
+    .footer-watermark { position: absolute; bottom: 0; right: 0; font-family: var(--font-title); font-size: 8rem; font-weight: 800; color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; user-select: none; }
+
+    @media (max-width: 1024px) {
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      /* Header */
+      .nav-inner { gap: 12px; }
+      .header-actions { margin-left: auto; }
+      .main-nav { display: none; }
+      .burger { display: flex; }
+      /* Contact layout */
+      .contact-section { padding: 64px 0 72px; }
+      .contact-layout { grid-template-columns: 1fr; gap: 32px; }
+      /* Form */
+      .form-grid { grid-template-columns: 1fr; }
+      .form-card { padding: 28px 20px; }
+      /* FAQ */
+      .faq-section { padding: 64px 0; }
+      .faq-layout { grid-template-columns: 1fr; gap: 32px; }
+      /* Reassurance info-cards: already column-flex, ensure full width */
+      .contact-info { gap: 16px; }
+      .info-card { padding: 20px 16px; }
+      /* Footer */
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .footer-watermark { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      /* Header */
+      .nav-inner { gap: 8px; }
+      /* Form inputs full width already; reduce card padding */
+      .form-card { padding: 20px 14px; }
+      .form-group input,
+      .form-group select,
+      .form-group textarea { padding: 10px 12px; font-size: 0.88rem; }
+      /* FAQ accordion title smaller */
+      .faq-question { font-size: 0.88rem; padding: 16px 0; }
+      /* CTA back */
+      .cta-back { padding: 48px 0; }
+      /* Info cards tighter */
+      .info-icon { width: 44px; height: 44px; font-size: 1.2rem; flex-shrink: 0; }
+      .info-content h4 { font-size: 0.9rem; }
+      .info-content p { font-size: 0.82rem; }
+      /* Footer */
+      .footer-inner { gap: 20px; }
+      /* Shared — FAB + QC modal */
+      .fab-group { bottom: 16px; right: 16px; gap: 8px; }
+      .fab-contact, .fab-cart { width: 44px; height: 44px; font-size: 1rem; }
+      .qc-modal { right: 16px; bottom: 76px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); z-index: 9999; transition: width 0.1s linear; }
+    .cart-overlay { position: fixed; inset: 0; background: rgba(11,22,44,0.55); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(4px); }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--white); z-index: 2001; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; box-shadow: -20px 0 80px rgba(0,0,0,0.25); }
+    .cart-drawer.open { transform: translateX(0); }
+    .drawer-header { padding: 22px 24px 18px; border-bottom: 1px solid rgba(59,85,109,0.1); display: flex; align-items: center; justify-content: space-between; background: var(--dark-1); flex-shrink: 0; }
+    .drawer-header-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-header h3 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--white); }
+    .drawer-header-badge { background: var(--accent); color: var(--dark-1); font-family: var(--font-title); font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+    .drawer-close { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); transition: var(--transition); font-size: 1.1rem; }
+    .drawer-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 16px 24px; scrollbar-width: thin; }
+    .drawer-empty { text-align: center; padding: 52px 16px; }
+    .drawer-empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.35; }
+    .drawer-empty p { color: var(--mid); font-size: 0.9rem; line-height: 1.65; margin-bottom: 20px; }
+    .drawer-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(59,85,109,0.08); }
+    .drawer-item:last-child { border-bottom: none; }
+    .drawer-item-icon { width: 42px; height: 42px; background: rgba(95,194,186,0.1); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .drawer-item-info { flex: 1; min-width: 0; }
+    .drawer-item-tag { font-size: 0.65rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+    .drawer-item-name { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--dark-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+    .drawer-item-price { font-size: 0.78rem; color: var(--mid); margin-top: 1px; }
+    .drawer-item-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .dqty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(59,85,109,0.2); background: var(--white); color: var(--dark-1); font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+    .dqty-btn:hover { background: var(--accent); color: var(--dark-1); border-color: var(--accent); }
+    .dqty-num { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; min-width: 18px; text-align: center; }
+    .drawer-del { background: none; border: none; cursor: pointer; color: rgba(59,85,109,0.35); padding: 4px 6px; border-radius: 6px; transition: var(--transition); font-size: 0.85rem; }
+    .drawer-del:hover { color: #e74c3c; }
+    .drawer-footer { padding: 18px 24px 20px; border-top: 1px solid rgba(59,85,109,0.1); background: var(--gray-light); flex-shrink: 0; }
+    .drawer-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .drawer-total .lbl { font-family: var(--font-title); font-size: 0.85rem; color: var(--mid); font-weight: 600; }
+    .drawer-total .amt { font-family: var(--font-title); font-size: 1.5rem; font-weight: 800; color: var(--dark-1); }
+    .drawer-note { font-size: 0.73rem; color: var(--mid); line-height: 1.55; margin-bottom: 14px; padding: 10px; background: rgba(95,194,186,0.07); border-radius: 8px; border-left: 2px solid rgba(95,194,186,0.3); }
+    .drawer-cta { width: 100%; justify-content: center; margin-bottom: 8px; }
+    .drawer-clear { background: none; border: none; color: rgba(59,85,109,0.55); font-size: 0.78rem; cursor: pointer; font-family: var(--font-body); text-align: center; width: 100%; padding: 4px; transition: var(--transition); }
+    .drawer-clear:hover { color: #e74c3c; }
+    .fab-group { position: fixed; bottom: 28px; right: 28px; z-index: 1500; display: flex; flex-direction: row; align-items: center; gap: 10px; }
+    .fab-cart { width: 54px; height: 54px; border-radius: 50%; background: var(--dark-1); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(11,22,44,0.5); transition: var(--transition); color: var(--white); position: relative; flex-shrink: 0; }
+    .fab-cart:hover { background: var(--dark-2); transform: scale(1.08); }
+    .fab-cart .fab-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: var(--dark-1); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-title); font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); }
+    .fab-cart .fab-badge.hidden { display: none; }
+    .fab-contact { display: flex; align-items: center; gap: 9px; background: var(--accent); color: var(--dark-1); padding: 13px 20px; border-radius: var(--radius-btn); font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; box-shadow: 0 8px 24px rgba(95,194,186,0.4); cursor: pointer; border: none; transition: var(--transition); white-space: nowrap; animation: pulse-fab 3s ease-in-out infinite; }
+    .fab-contact:hover { background: var(--accent-light); transform: translateY(-3px); animation: none; }
+    @keyframes pulse-fab { 0%,100%{box-shadow:0 8px 24px rgba(95,194,186,0.4);}50%{box-shadow:0 8px 36px rgba(95,194,186,0.65);} }
+    .qc-modal { position: fixed; bottom: 96px; right: 28px; width: 360px; max-width: calc(100vw - 40px); background: var(--white); border-radius: 20px; box-shadow: 0 32px 80px rgba(11,22,44,0.3),0 0 0 1px rgba(59,85,109,0.1); z-index: 2500; overflow: hidden; transform: translateY(16px) scale(0.96); opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s ease; }
+    .qc-modal.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .qc-head { background: var(--dark-1); padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .qc-head-text h4 { font-family: var(--font-title); font-size: 0.97rem; font-weight: 700; color: var(--white); }
+    .qc-head-text p { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .qc-close-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.18); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); font-size: 1rem; transition: var(--transition); flex-shrink: 0; }
+    .qc-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .qc-body { padding: 18px 20px; }
+    .qc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .qc-field { margin-bottom: 12px; }
+    .qc-field label { display: block; font-family: var(--font-title); font-size: 0.75rem; font-weight: 600; color: var(--dark-1); margin-bottom: 5px; }
+    .qc-field input,.qc-field textarea,.qc-field select { width: 100%; padding: 9px 13px; border: 1.5px solid rgba(59,85,109,0.18); border-radius: 9px; font-family: var(--font-body); font-size: 0.87rem; color: var(--dark-1); background: var(--gray-light); outline: none; transition: var(--transition); }
+    .qc-field input:focus,.qc-field textarea:focus,.qc-field select:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 3px rgba(95,194,186,0.1); }
+    .qc-field input.qc-err,.qc-field textarea.qc-err { border-color: #e74c3c; }
+    .qc-field textarea { resize: none; height: 72px; }
+    .qc-submit { width: 100%; justify-content: center; padding: 11px; font-size: 0.9rem; }
+    .qc-success { display: none; text-align: center; padding: 20px 16px 8px; }
+    .qc-success.visible { display: block; }
+    .qc-success-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .qc-success h5 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--dark-1); }
+    .qc-success p { font-size: 0.83rem; color: var(--mid); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo"><img src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol"></a>
+    <nav class="main-nav">
+      <a href="index.html">Accueil</a>
+      <a href="services.html">Services</a>
+      <a href="pourquoi-nous.html">Pourquoi nous</a>
+      <a href="panier.html">Panier</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" id="cartDrawerTrigger" aria-label="Ouvrir le panier">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-count hidden" id="cartCount">0</span>
+      </button>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Accueil</a>
+  <a href="services.html">Services</a>
+  <a href="pourquoi-nous.html">Pourquoi nous</a>
+  <a href="panier.html">Panier</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" style="color:var(--accent);margin-top:8px;">Prendre contact →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroWebGL"></canvas>
+  <div class="container">
+    <div class="hero-content">
+      <div class="section-label" style="margin:0 auto 20px;display:inline-flex;">Prenons contact</div>
+      <h1 class="title-xl">Parlons de <span class="accent-text">votre projet</span></h1>
+      <p>Chaque parcours est unique. Commençons par un échange pour comprendre votre situation et définir la meilleure approche ensemble.</p>
+      <div class="hero-badge">
+        <span>🎁</span>
+        Premier échange de <strong style="color:var(--white);margin:0 4px;">30 minutes offert</strong> — sans engagement
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT FORM + INFO -->
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- FORM -->
+      <div class="form-card" id="formCard">
+        <h2>Envoyez-moi un message</h2>
+        <p>Tous les champs marqués * sont obligatoires.</p>
+        <form id="contactForm" novalidate>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="prenom">Prénom *</label>
+              <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" autocomplete="given-name">
+              <span class="form-error" id="err-prenom">Veuillez entrer votre prénom</span>
+            </div>
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" name="nom" placeholder="Votre nom" autocomplete="family-name">
+              <span class="form-error" id="err-nom">Veuillez entrer votre nom</span>
+            </div>
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" placeholder="votre@email.com" autocomplete="email">
+              <span class="form-error" id="err-email">Adresse email invalide</span>
+            </div>
+            <div class="form-group">
+              <label for="telephone">Téléphone</label>
+              <input type="tel" id="telephone" name="telephone" placeholder="+41 XX XXX XX XX" autocomplete="tel">
+            </div>
+            <div class="form-group full">
+              <label for="service">Service souhaité</label>
+              <select id="service" name="service">
+                <option value="">— Sélectionnez une prestation —</option>
+                <optgroup label="CV & Candidature">
+                  <option>Diffusion de votre CV (200 CHF)</option>
+                  <option>Création de CV et lettre de motivation (300 CHF)</option>
+                  <option>Forfait d'accompagnement partiel (600 CHF)</option>
+                  <option>Forfait d'accompagnement complet (1000 CHF)</option>
+                </optgroup>
+                <optgroup label="Coaching">
+                  <option>Coaching complet (1800 CHF)</option>
+                </optgroup>
+                <optgroup label="Bilan de compétences">
+                  <option>Analyse personnelle (600 CHF)</option>
+                  <option>Analyse professionnelle (600 CHF)</option>
+                  <option>Pack 2 analyses (1000 CHF)</option>
+                  <option>Bilan sur mesure (2000–4000 CHF)</option>
+                </optgroup>
+                <optgroup label="LinkedIn">
+                  <option>LinkedIn Formule 1 — Audit + photo (300 CHF)</option>
+                  <option>LinkedIn Formule 2 — Refonte + photo (570 CHF)</option>
+                </optgroup>
+                <option value="autre">Je ne sais pas encore</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="message">Votre message *</label>
+              <textarea id="message" name="message" placeholder="Décrivez brièvement votre situation et vos objectifs professionnels..."></textarea>
+              <span class="form-error" id="err-message">Veuillez saisir un message</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary form-submit" id="submitBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Envoyer mon message
+          </button>
+        </form>
+
+        <!-- SUCCESS STATE -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">✓</div>
+          <h3>Message envoyé !</h3>
+          <p>Merci pour votre message. Je vous recontacte dans les plus brefs délais pour fixer notre premier échange de 30 minutes offert.</p>
+        </div>
+      </div>
+
+      <!-- INFO + REASSURANCE -->
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">🎁</div>
+          <div class="info-content">
+            <h4>30 minutes offertes</h4>
+            <p>Premier échange téléphonique ou physique entièrement gratuit pour comprendre votre situation et définir la meilleure approche.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🎯</div>
+          <div class="info-content">
+            <h4>Accompagnement personnalisé</h4>
+            <p>Chaque client est unique. Je construis avec vous une stratégie sur mesure adaptée à <strong>votre parcours et vos ambitions</strong>.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🇨🇭</div>
+          <div class="info-content">
+            <h4>Expertise du marché suisse</h4>
+            <p>Intervention principalement à <strong>Genève et dans le canton de Vaud</strong>. Connaissance des codes et des attentes du marché local.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🤝</div>
+          <div class="info-content">
+            <h4>Réseau de 30+ partenaires</h4>
+            <p>Accès à un réseau qualifié d'agences de placement et d'entreprises partenaires pour maximiser votre visibilité.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="faq-layout">
+      <div class="faq-intro">
+        <div class="section-label">FAQ</div>
+        <h2 class="title-lg">Questions <span class="accent-text">fréquentes</span></h2>
+        <p>Des questions avant de nous contacter ? Retrouvez ici les réponses aux questions les plus courantes.</p>
+        <a href="services.html" class="btn btn-outline">Voir tous les services</a>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" data-idx="0">
+            Quel service choisir si je ne sais pas par où commencer ?
+            <span class="faq-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer" id="faq-0">
+            <div class="faq-answer-inner">Le premier échange de 30 minutes offert est fait pour ça ! Nous évaluons ensemble votre situation, vos objectifs et votre profil pour identifier la prestation la plus adaptée. Vous pouvez aussi simplement m'envoyer un message en sélectionnant « Je ne sais pas encore » dans le formulaire.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-idx="1">
+            Le premier échange est-il vraiment gratuit et sans engagement ?
+            <span class="faq-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer" id="faq-1">
+            <div class="faq-answer-inner">Oui, absolument. Le premier échange téléphonique ou physique de 30 minutes est entièrement offert et sans engagement. C'est simplement une occasion de nous parler, de comprendre votre situation et de voir si une collaboration peut vous aider à avancer.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-idx="2">
+            Puis-je venir avec un CV déjà existant ?
+            <span class="faq-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer" id="faq-2">
+            <div class="faq-answer-inner">Bien sûr ! Si vous avez déjà un CV, je peux l'analyser et vous proposer des améliorations ciblées. Selon l'état du document et vos objectifs, nous choisirons ensemble l'option la plus adaptée — une simple optimisation ou une refonte complète.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-idx="3">
+            Proposez-vous un accompagnement LinkedIn ?
+            <span class="faq-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer" id="faq-3">
+            <div class="faq-answer-inner">Oui, j'offre deux formules LinkedIn. La Formule 1 (300 CHF) inclut un audit complet avec rapport PDF et photo professionnelle. La Formule 2 (570 CHF) va plus loin avec une refonte éditoriale complète, des scripts de prise de contact, un coaching au paramétrage et un suivi J+30.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-idx="4">
+            Les accompagnements se font-ils en présentiel ou à distance ?
+            <span class="faq-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer" id="faq-4">
+            <div class="faq-answer-inner">Les deux sont possibles ! Les séances peuvent se tenir en présentiel (principalement à Genève et dans le canton de Vaud) ou à distance par visioconférence. Nous adapterons le format à vos préférences et à votre situation géographique.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BACK TO SERVICES -->
+<section class="cta-back">
+  <div class="container">
+    <div class="section-label" style="margin:0 auto 20px;display:inline-flex;">Prochaine étape</div>
+    <h2>Pas encore convaincu ? Découvrez mes services</h2>
+    <p>Explorez l'ensemble des prestations disponibles pour trouver l'accompagnement le plus adapté à votre situation.</p>
+    <a href="services.html" class="btn btn-secondary">Voir tous les services</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="footer-logo" src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol">
+        <p>Conseillère en insertion professionnelle basée en Suisse. Accompagnement humain, concret et orienté résultats.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pourquoi-nous.html">Pourquoi nous</a></li>
+          <li><a href="panier.html">Panier</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">CV & Lettre</a></li>
+          <li><a href="services.html">Coaching complet</a></li>
+          <li><a href="services.html">Bilan de compétences</a></li>
+          <li><a href="services.html">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-contact-block">
+        <h4>Contact</h4>
+        <p>📍 Genève & canton de Vaud</p>
+        <p>🇨🇭 Suisse</p>
+        <p class="ac">Premier échange gratuit de 30 min</p>
+        <a href="contact.html" class="btn btn-outline" style="margin-top:16px;padding:10px 20px;font-size:0.85rem;">Nous contacter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Cathy Gidrol — Tous droits réservés</p>
+      <p>Insertion professionnelle · Genève · Vaud · Suisse</p>
+    </div>
+    <div class="footer-watermark">CG</div>
+  </div>
+</footer>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <div class="drawer-header-left"><h3>Mon panier</h3><span class="drawer-header-badge" id="drawerBadge">0</span></div>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div class="drawer-empty" id="drawerEmpty">
+      <div class="drawer-empty-icon">🛒</div>
+      <p>Votre panier est vide.<br>Découvrez mes services et ajoutez vos prestations.</p>
+      <a href="services.html" class="btn btn-primary" style="font-size:0.88rem;padding:10px 22px;">Voir les services</a>
+    </div>
+  </div>
+  <div class="drawer-footer" id="drawerFooter" style="display:none;">
+    <div class="drawer-total"><span class="lbl">Total estimé</span><span class="amt" id="drawerTotal">0 CHF</span></div>
+    <p class="drawer-note">💡 Aucun paiement en ligne — ce panier prépare notre échange.</p>
+    <a href="contact.html" class="btn btn-primary drawer-cta"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.69 12 19.79 19.79 0 011.61 3.18 2 2 0 013.6 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.64a16 16 0 006.29 6.29l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Prendre contact</a>
+    <a href="panier.html" style="display:block;text-align:center;font-family:var(--font-title);font-size:0.8rem;color:var(--mid);margin-top:6px;text-decoration:underline;">Voir le panier complet</a>
+    <button class="drawer-clear" id="drawerClear">Vider le panier</button>
+  </div>
+</div>
+<div class="fab-group" id="fabGroup">
+  <button class="fab-contact" id="fabContact"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Contact rapide</button>
+  <button class="fab-cart" id="fabCart" aria-label="Panier"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="fab-badge hidden" id="fabBadge">0</span></button>
+</div>
+<div class="qc-modal" id="qcModal">
+  <div class="qc-head"><div class="qc-head-text"><h4>Contact rapide</h4><p>🎁 Premier échange de 30 min offert</p></div><button class="qc-close-btn" id="qcClose">✕</button></div>
+  <div class="qc-body">
+    <form id="qcFormFab" novalidate>
+      <div class="qc-row"><div class="qc-field"><label>Prénom *</label><input type="text" id="qcPrenom" placeholder="Votre prénom"></div><div class="qc-field"><label>Email *</label><input type="email" id="qcEmail" placeholder="votre@email.com"></div></div>
+      <div class="qc-field"><label>Service souhaité</label><select id="qcService"><option value="">— Sélectionner —</option><option>CV & Lettre de motivation</option><option>Coaching complet</option><option>Bilan de compétences</option><option>LinkedIn</option><option>Je ne sais pas encore</option></select></div>
+      <div class="qc-field"><label>Message rapide *</label><textarea id="qcMessage" placeholder="Décrivez brièvement votre situation..."></textarea></div>
+      <button type="submit" class="btn btn-primary qc-submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Envoyer</button>
+    </form>
+    <div class="qc-success" id="qcSuccess"><div class="qc-success-icon">✅</div><h5>Message envoyé !</h5><p>Je vous recontacte très vite pour fixer notre premier échange offert.</p></div>
+  </div>
+</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ===== FORM VALIDATION ===== */
+  function showError(id, show) {
+    const el = document.getElementById('err-' + id);
+    const input = document.getElementById(id);
+    if (!el || !input) return;
+    el.classList.toggle('visible', show);
+    input.classList.toggle('error', show);
+  }
+  function clearError(id) { showError(id, false); }
+
+  ['prenom', 'nom', 'email', 'message'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => clearError(id));
+  });
+
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let valid = true;
+    const prenom = document.getElementById('prenom').value.trim();
+    const nom = document.getElementById('nom').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!prenom) { showError('prenom', true); valid = false; } else clearError('prenom');
+    if (!nom) { showError('nom', true); valid = false; } else clearError('nom');
+    if (!email || !emailRegex.test(email)) { showError('email', true); valid = false; } else clearError('email');
+    if (!message) { showError('message', true); valid = false; } else clearError('message');
+
+    if (!valid) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Envoi...';
+
+    setTimeout(() => {
+      document.getElementById('contactForm').style.display = 'none';
+      const successEl = document.getElementById('formSuccess');
+      successEl.classList.add('visible');
+      gsap.from(successEl.children, { y: 20, opacity: 0, duration: 0.6, stagger: 0.12, ease: 'power3.out' });
+    }, 1200);
+  });
+
+  /* ===== FAQ ACCORDION ===== */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.dataset.idx;
+      const answer = document.getElementById('faq-' + idx);
+      const isOpen = btn.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-question').forEach(b => {
+        b.classList.remove('open');
+        const a = document.getElementById('faq-' + b.dataset.idx);
+        if (a) a.style.height = '0';
+      });
+
+      // Open clicked
+      if (!isOpen) {
+        btn.classList.add('open');
+        answer.style.height = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  /* ===== GSAP ===== */
+  gsap.from('.site-header', { y: -80, opacity: 0, duration: 0.8, ease: 'power3.out' });
+  gsap.from('.hero-content > *', { y: 40, opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out', delay: 0.3 });
+  gsap.from('.form-card', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '.form-card', start: 'top 85%', once: true } });
+  gsap.from('.info-card', { y: 40, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: '.contact-info', start: 'top 80%', once: true } });
+  gsap.from('.faq-item', { y: 30, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: '.faq-list', start: 'top 85%', once: true } });
+
+  /* CSS spin animation */
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(style);
+
+  /* ===== CART DRAWER + FAB ===== */
+  const catIcons={'CV':'📄','Coaching':'🎯','Bilan de compétences':'🔍','LinkedIn':'💼'};
+  function cartGet(){try{return JSON.parse(localStorage.getItem('cg_cart'))||[];}catch(e){return[];}}
+  function cartSave(items){localStorage.setItem('cg_cart',JSON.stringify(items));}
+  function cartCount(){return cartGet().reduce((s,i)=>s+(i.quantite||1),0);}
+  function updateAllBadges(){const n=cartCount();['cartCount','drawerBadge','fabBadge'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent=n;el.classList.toggle('hidden',n===0);if(id==='drawerBadge')el.style.display=n>0?'':'none';});}
+  updateAllBadges();
+  function renderDrawer(){const items=cartGet(),body=document.getElementById('drawerBody'),footer=document.getElementById('drawerFooter'),empty=document.getElementById('drawerEmpty');if(!body)return;body.querySelectorAll('.drawer-item').forEach(el=>el.remove());if(items.length===0){if(empty)empty.style.display='';if(footer)footer.style.display='none';updateAllBadges();return;}if(empty)empty.style.display='none';if(footer)footer.style.display='';let total=0;items.forEach(item=>{const qty=item.quantite||1;total+=item.prix*qty;const div=document.createElement('div');div.className='drawer-item';div.innerHTML=`<div class="drawer-item-icon">${catIcons[item.categorie]||'📋'}</div><div class="drawer-item-info"><div class="drawer-item-tag">${item.categorie}</div><div class="drawer-item-name">${item.titre}</div><div class="drawer-item-price">${item.prix} CHF / unité</div></div><div class="drawer-item-actions"><button class="dqty-btn" onclick="drawerQty('${item.id}',-1)">−</button><span class="dqty-num">${qty}</span><button class="dqty-btn" onclick="drawerQty('${item.id}',1)">+</button><button class="drawer-del" onclick="drawerRemove('${item.id}')" title="Supprimer">🗑</button></div>`;body.appendChild(div);});const totalEl=document.getElementById('drawerTotal');if(totalEl){const prev=parseInt(totalEl.textContent)||0;gsap.to({val:prev},{val:total,duration:0.5,ease:'power2.out',onUpdate:function(){totalEl.textContent=Math.round(this.targets()[0].val)+' CHF';}});}updateAllBadges();}
+  function drawerQty(id,delta){let items=cartGet();const idx=items.findIndex(i=>i.id===id);if(idx<0)return;items[idx].quantite=Math.max(1,(items[idx].quantite||1)+delta);cartSave(items);renderDrawer();}
+  function drawerRemove(id){cartSave(cartGet().filter(i=>i.id!==id));renderDrawer();}
+  function openDrawer(){renderDrawer();document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartDrawer').classList.add('open');document.body.style.overflow='hidden';}
+  function closeDrawer(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('cartDrawerTrigger').addEventListener('click',openDrawer);
+  document.getElementById('fabCart').addEventListener('click',openDrawer);
+  document.getElementById('drawerClose').addEventListener('click',closeDrawer);
+  document.getElementById('cartOverlay').addEventListener('click',closeDrawer);
+  document.getElementById('drawerClear').addEventListener('click',()=>{if(confirm('Vider le panier ?')){cartSave([]);renderDrawer();}});
+  const qcModal=document.getElementById('qcModal');
+  function openQC(){qcModal.classList.add('open');}
+  function closeQC(){qcModal.classList.remove('open');}
+  document.getElementById('fabContact').addEventListener('click',openQC);
+  document.getElementById('qcClose').addEventListener('click',closeQC);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeQC();}});
+  document.getElementById('qcFormFab').addEventListener('submit',function(e){e.preventDefault();const prenom=document.getElementById('qcPrenom').value.trim(),email=document.getElementById('qcEmail').value.trim(),msg=document.getElementById('qcMessage').value.trim(),rx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;let ok=true;[document.getElementById('qcPrenom'),document.getElementById('qcEmail'),document.getElementById('qcMessage')].forEach(el=>el.classList.remove('qc-err'));if(!prenom){document.getElementById('qcPrenom').classList.add('qc-err');ok=false;}if(!email||!rx.test(email)){document.getElementById('qcEmail').classList.add('qc-err');ok=false;}if(!msg){document.getElementById('qcMessage').classList.add('qc-err');ok=false;}if(!ok)return;setTimeout(()=>{document.getElementById('qcFormFab').style.display='none';const s=document.getElementById('qcSuccess');s.classList.add('visible');gsap.from(s.children,{y:16,opacity:0,duration:0.5,stagger:0.1,ease:'power3.out'});setTimeout(closeQC,3500);},800);});
+  const progressBar=document.getElementById('scrollProgress');
+  window.addEventListener('scroll',()=>{const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;if(progressBar)progressBar.style.width=pct+'%';},{passive:true});
+  window.addEventListener('scroll',()=>document.getElementById('header').classList.toggle('scrolled',window.scrollY>60),{passive:true});
+  document.getElementById('burger').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('open'));
+</script>
+
+<script>
+/* ===== THREE.JS HERO LIQUID GRADIENT ===== */
+(function() {
+  if (typeof THREE === 'undefined') return;
+  const canvas = document.getElementById('heroWebGL');
+  const hero   = canvas.closest('.hero');
+  class TouchTexture {
+    constructor() { this.size=64; this.maxAge=100; this.radius=0.18; this.trail=[]; this._init(); }
+    _init() {
+      this.cvs=document.createElement('canvas'); this.cvs.width=this.cvs.height=this.size;
+      this.ctx=this.cvs.getContext('2d'); this.ctx.fillStyle='black';
+      this.ctx.fillRect(0,0,this.size,this.size); this.texture=new THREE.CanvasTexture(this.cvs);
+    }
+    addTouch(pt) { this.trail.push({x:pt.x,y:pt.y,age:0}); }
+    update() {
+      this.ctx.fillStyle='rgba(0,0,0,0.05)'; this.ctx.fillRect(0,0,this.size,this.size);
+      this.trail=this.trail.filter(p=>p.age<=this.maxAge);
+      this.trail.forEach(p=>{ p.age++; const i=Math.pow(1-p.age/this.maxAge,1.5);
+        this.ctx.beginPath(); this.ctx.arc(p.x*this.size,p.y*this.size,this.size*this.radius,0,Math.PI*2);
+        this.ctx.fillStyle=`rgba(255,255,255,${i*0.55})`; this.ctx.fill(); });
+      this.texture.needsUpdate=true;
+    }
+  }
+  const vertexShader=`varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position,1.0);}`;
+  const fragmentShader=`
+    precision mediump float;
+    uniform float uTime; uniform vec2 uRes; uniform sampler2D uTouch; varying vec2 vUv;
+    vec3 cNavy=vec3(0.043,0.086,0.173); vec3 cMid=vec3(0.110,0.161,0.259); vec3 cTeal=vec3(0.373,0.761,0.729);
+    float blob(vec2 uv,vec2 c,float r){return r/(dot(uv-c,uv-c)+0.001);}
+    void main(){
+      vec2 uv=vUv; float t=uTime*0.22; float f=0.0;
+      f+=blob(uv,vec2(0.50+0.30*sin(t*0.70),0.50+0.25*cos(t*0.50)),0.018);
+      f+=blob(uv,vec2(0.20+0.18*cos(t*0.60),0.30+0.22*sin(t*0.80)),0.013);
+      f+=blob(uv,vec2(0.75+0.17*sin(t*0.55+1.5),0.65+0.20*cos(t*0.70)),0.015);
+      f+=blob(uv,vec2(0.15+0.12*cos(t*0.90+0.5),0.75+0.16*sin(t*0.40)),0.012);
+      f+=blob(uv,vec2(0.80+0.13*sin(t*0.65+2.0),0.25+0.18*cos(t*0.75)),0.013);
+      f+=blob(uv,vec2(0.45+0.22*cos(t*0.45+1.0),0.90+0.08*sin(t*1.20)),0.014);
+      f+=blob(uv,vec2(0.60+0.20*sin(t*0.80+0.8),0.15+0.12*cos(t*0.55)),0.011);
+      f+=blob(uv,vec2(0.35+0.15*cos(t*0.50+2.5),0.55+0.20*sin(t*0.60+1.0)),0.010);
+      f+=blob(uv,vec2(0.88+0.08*sin(t*1.10+0.3),0.50+0.25*cos(t*0.45+0.7)),0.009);
+      f+=blob(uv,vec2(0.08+0.07*cos(t*0.75+1.2),0.45+0.18*sin(t*0.85)),0.009);
+      f+=blob(uv,vec2(0.55+0.18*sin(t*0.60+3.0),0.38+0.15*cos(t*0.95+0.5)),0.010);
+      f+=blob(uv,vec2(0.30+0.20*cos(t*0.40+0.9),0.80+0.10*sin(t*0.70+2.0)),0.011);
+      float lo=smoothstep(0.35,0.90,f); float hi=smoothstep(0.90,2.00,f);
+      vec3 col=mix(cNavy,cMid,lo*0.7); col=mix(col,cTeal,hi*0.38);
+      col=mix(col,cNavy,0.35);
+      float touch=texture2D(uTouch,uv).r; col+=touch*0.08*cTeal;
+      float vig=1.0-smoothstep(0.30,0.85,length(uv-vec2(0.5)));
+      col=mix(cNavy*0.65,col,vig*0.65+0.35);
+      gl_FragColor=vec4(col,1.0);
+    }`;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  const scene=new THREE.Scene(), camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1), touch=new TouchTexture();
+  const uniforms={uTime:{value:0},uRes:{value:new THREE.Vector2()},uTouch:{value:touch.texture}};
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({vertexShader,fragmentShader,uniforms})));
+  function resize(){const w=hero.clientWidth,h=hero.clientHeight;renderer.setSize(w,h,false);uniforms.uRes.value.set(w,h);}
+  resize(); window.addEventListener('resize',resize);
+  hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();touch.addTouch({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height});});
+  hero.addEventListener('touchmove',e=>{const r=hero.getBoundingClientRect();Array.from(e.touches).forEach(t=>touch.addTouch({x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height}));},{passive:true});
+  (function loop(){requestAnimationFrame(loop);uniforms.uTime.value+=0.016;touch.update();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Cathy Gidrol Formations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --dark-1: #0B162C; --dark-2: #1C2942; --mid: #3B556D;
+      --accent: #5FC2BA; --accent-light: #7DD4CD; --white: #FFFFFF;
+      --gray-light: #F4F7FA;
+      --font-title: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+      --radius-card: 20px; --radius-btn: 50px;
+      --shadow: 0 8px 32px rgba(11,22,44,0.10); --shadow-lg: 0 20px 60px rgba(11,22,44,0.15);
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); color: var(--dark-1); background: var(--white); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(95,194,186,0.12); color: var(--accent); font-family: var(--font-title); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 16px; border-radius: var(--radius-btn); border: 1px solid rgba(95,194,186,0.25); margin-bottom: 20px; }
+    .section-label::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .title-xl { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; font-family: var(--font-title); line-height: 1.1; }
+    .title-lg { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; font-family: var(--font-title); line-height: 1.15; }
+    .accent-text { color: var(--accent); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-title); font-weight: 600; font-size: 0.95rem; padding: 13px 28px; border-radius: var(--radius-btn); border: 2px solid transparent; cursor: pointer; transition: var(--transition); white-space: nowrap; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: var(--dark-1); }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(95,194,186,0.35); }
+    .btn-secondary { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.35); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--accent); border-color: var(--accent); }
+    .btn-outline:hover { background: var(--accent); color: var(--dark-1); transform: translateY(-2px); }
+    .btn-dark { background: var(--dark-1); color: var(--white); }
+    .btn-dark:hover { background: var(--dark-2); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn-cart { background: var(--accent); color: var(--dark-1); width: 100%; justify-content: center; }
+    .btn-cart:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(95,194,186,0.35); }
+    .btn-cart.added { background: #28a745; color: white; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 16px 0;
+      background: rgba(11,22,44,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: var(--transition);
+    }
+    .site-header.scrolled {
+      padding: 10px 0;
+      background: rgba(11,22,44,0.98);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+    .nav-inner { display: flex; align-items: center; gap: 32px; }
+    .logo { flex-shrink: 0; }
+    .logo img { height: 38px; width: auto; }
+    .main-nav { display: flex; gap: 4px; flex: 1; justify-content: center; }
+    .main-nav a {
+      font-family: var(--font-title); font-size: 0.9rem; font-weight: 500;
+      color: rgba(255,255,255,0.75); padding: 8px 14px; border-radius: 8px;
+      transition: var(--transition);
+    }
+    .main-nav a:hover, .main-nav a.active { color: var(--white); background: rgba(255,255,255,0.08); }
+    .main-nav a.active { color: var(--accent); background: rgba(95,194,186,0.12); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .cart-btn {
+      position: relative; display: flex; align-items: center;
+      gap: 6px; color: rgba(255,255,255,0.8); font-family: var(--font-title);
+      font-size: 0.88rem; font-weight: 500; padding: 8px 14px;
+      border-radius: 10px; transition: var(--transition);
+      background: transparent; border: none; cursor: pointer;
+    }
+    .cart-btn:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+    .cart-count {
+      background: var(--accent); color: var(--dark-1);
+      font-size: 0.7rem; font-weight: 700;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cart-count.hidden { display: none; }
+    .burger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 8px;
+    }
+    .burger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+    .mobile-menu {
+      display: none; position: fixed; top: 70px; left: 0; right: 0;
+      background: var(--dark-1); padding: 20px; z-index: 999;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a {
+      display: block; padding: 14px 16px; color: rgba(255,255,255,0.85);
+      font-family: var(--font-title); font-size: 1rem; font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.06); transition: var(--transition);
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--dark-1); padding: 140px 0 80px; position: relative; overflow: hidden; }
+    #heroWebGL { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; pointer-events: none; }
+    .hero > .container { position: relative; z-index: 1; }
+    .hero-content { text-align: center; max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+    .hero h1 { color: var(--white); margin-bottom: 20px; }
+    .hero p { font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-bottom: 32px; line-height: 1.75; }
+    .hero-offer { display: inline-flex; align-items: center; gap: 10px; background: rgba(95,194,186,0.1); border: 1px solid rgba(95,194,186,0.25); border-radius: 14px; padding: 14px 24px; color: var(--accent); font-family: var(--font-title); font-size: 0.92rem; font-weight: 600; margin-bottom: 40px; }
+    .hero-offer span { font-size: 1.2rem; }
+
+    /* TABS */
+    .tabs-wrap { background: var(--white); padding: 32px 0 0; border-bottom: 1px solid rgba(59,85,109,0.12); position: sticky; top: 70px; z-index: 100; }
+    .tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 0; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font-family: var(--font-title); font-size: 0.92rem; font-weight: 600;
+      padding: 12px 24px; border-radius: 8px 8px 0 0; cursor: pointer;
+      border: none; background: transparent; color: var(--mid);
+      transition: var(--transition); white-space: nowrap;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(95,194,186,0.06); }
+    .tab-btn:hover:not(.active) { color: var(--dark-1); background: rgba(59,85,109,0.06); }
+
+    /* SERVICES GRID */
+    .services-section { padding: 64px 0 96px; }
+    .services-category { display: none; }
+    .services-category.active { display: block; }
+    .category-header { margin-bottom: 40px; }
+    .category-header h2 { font-family: var(--font-title); font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+    .category-header p { color: var(--mid); font-size: 0.95rem; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .service-card {
+      background: var(--white); border-radius: var(--radius-card); padding: 32px;
+      box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1);
+      transition: var(--transition); display: flex; flex-direction: column; gap: 0;
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(95,194,186,0.25); }
+    .service-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); background: rgba(95,194,186,0.1); padding: 4px 12px; border-radius: 20px; display: inline-flex; width: fit-content; margin-bottom: 16px; }
+    .service-card h3 { font-family: var(--font-title); font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; color: var(--dark-1); }
+    .service-desc { font-size: 0.88rem; color: var(--mid); line-height: 1.65; margin-bottom: 20px; }
+    .service-bullets { margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+    .service-bullets li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.83rem; color: var(--mid); line-height: 1.5; }
+    .service-bullets li::before { content: '✓'; min-width: 18px; height: 18px; background: rgba(95,194,186,0.12); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .service-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(59,85,109,0.1); }
+    .service-price { font-family: var(--font-title); font-size: 1.8rem; font-weight: 800; color: var(--dark-1); margin-bottom: 16px; }
+    .service-price sup { font-size: 0.9rem; font-weight: 600; color: var(--mid); }
+    .service-price sub { font-size: 0.8rem; font-weight: 500; color: var(--mid); }
+
+    /* REASSURANCE */
+    .reassurance { background: var(--gray-light); padding: 80px 0; }
+    .reassurance-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .testi-card { background: var(--white); border-radius: var(--radius-card); padding: 32px; box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1); }
+    .testi-stars { color: #FFB020; font-size: 1rem; letter-spacing: 2px; margin-bottom: 16px; }
+    .testi-text { font-size: 0.92rem; color: var(--mid); line-height: 1.75; font-style: italic; margin-bottom: 24px; }
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .testi-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(95,194,186,0.3); }
+    .testi-name { font-family: var(--font-title); font-weight: 700; font-size: 0.95rem; }
+    .testi-role { font-size: 0.8rem; color: var(--mid); }
+
+    /* CTA BAND */
+    .cta-band { background: var(--accent); padding: 72px 0; position: relative; overflow: hidden; }
+    .cta-band-inner { text-align: center; position: relative; z-index: 1; }
+    .cta-band h2 { font-family: var(--font-title); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--dark-1); margin-bottom: 12px; }
+    .cta-band p { font-size: 1rem; color: rgba(11,22,44,0.7); margin-bottom: 28px; }
+    .cta-band-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none; }
+
+    /* FOOTER */
+    .site-footer { background: var(--dark-1); padding: 72px 0 32px; position: relative; overflow: hidden; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.07); position: relative; }
+    .footer-brand p { font-size: 0.88rem; color: rgba(255,255,255,0.45); line-height: 1.75; margin-top: 16px; max-width: 280px; }
+    .footer-logo { height: 36px; width: auto; }
+    .footer-col h4 { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.88rem; color: rgba(255,255,255,0.5); transition: var(--transition); }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-contact p { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; line-height: 1.6; }
+    .footer-contact .accent-c { color: var(--accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 28px; }
+    .footer-bottom p { font-size: 0.82rem; color: rgba(255,255,255,0.3); }
+    .footer-watermark { position: absolute; bottom: 0; right: 0; font-family: var(--font-title); font-size: 8rem; font-weight: 800; color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; user-select: none; letter-spacing: -4px; }
+
+    /* Toast notification */
+    .toast { position: fixed; bottom: 32px; right: 32px; background: var(--dark-1); color: var(--white); padding: 16px 24px; border-radius: 14px; font-family: var(--font-title); font-size: 0.9rem; font-weight: 600; box-shadow: var(--shadow-lg); border-left: 4px solid var(--accent); z-index: 9999; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .toast.show { transform: translateX(0); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; }
+
+      /* Header */
+      .nav-inner { gap: 12px; }
+      .header-actions { margin-left: auto; }
+      .main-nav { display: none; }
+      .burger { display: flex; }
+
+      /* Hero */
+      .hero { padding: 110px 0 60px; }
+
+      /* Tabs — horizontal scroll, no overflow */
+      .tabs-wrap { padding: 20px 0 0; top: 65px; }
+      .tabs { gap: 2px; padding: 0 4px; }
+      .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
+
+      /* Services */
+      .services-section { padding: 40px 0 64px; }
+      .services-grid { grid-template-columns: 1fr; }
+
+      /* Reassurance */
+      .reassurance { padding: 56px 0; }
+      .reassurance-inner { grid-template-columns: 1fr; gap: 32px; }
+
+      /* CTA */
+      .cta-band { padding: 56px 0; }
+
+      /* Footer */
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .footer-watermark { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      /* Hero */
+      .hero { padding: 96px 0 48px; }
+      .hero p { font-size: 0.97rem; }
+      .hero-offer { padding: 12px 16px; font-size: 0.85rem; flex-wrap: wrap; }
+
+      /* Tabs */
+      .tab-btn { padding: 8px 12px; font-size: 0.8rem; }
+
+      /* Services cards */
+      .service-card { padding: 24px 20px; }
+      .service-price { font-size: 1.5rem; }
+
+      /* Reassurance stats */
+      .reassurance-inner > div > div[style] { flex-direction: column; gap: 12px; }
+
+      /* CTA */
+      .cta-band { padding: 44px 0; }
+      .cta-band-inner > div { flex-direction: column; align-items: center; }
+
+      /* Footer */
+      .site-footer { padding: 52px 0 24px; }
+      /* Shared — FAB + QC modal */
+      .fab-group { bottom: 16px; right: 16px; gap: 8px; }
+      .fab-contact, .fab-cart { width: 44px; height: 44px; font-size: 1rem; }
+      .qc-modal { right: 16px; bottom: 76px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* ===== SCROLL PROGRESS ===== */
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); z-index: 9999; transition: width 0.1s linear; }
+    /* ===== CART DRAWER ===== */
+    .cart-overlay { position: fixed; inset: 0; background: rgba(11,22,44,0.55); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(4px); }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--white); z-index: 2001; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; box-shadow: -20px 0 80px rgba(0,0,0,0.25); }
+    .cart-drawer.open { transform: translateX(0); }
+    .drawer-header { padding: 22px 24px 18px; border-bottom: 1px solid rgba(59,85,109,0.1); display: flex; align-items: center; justify-content: space-between; background: var(--dark-1); flex-shrink: 0; }
+    .drawer-header-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-header h3 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--white); }
+    .drawer-header-badge { background: var(--accent); color: var(--dark-1); font-family: var(--font-title); font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+    .drawer-close { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); transition: var(--transition); font-size: 1.1rem; }
+    .drawer-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 16px 24px; scrollbar-width: thin; }
+    .drawer-empty { text-align: center; padding: 52px 16px; }
+    .drawer-empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.35; }
+    .drawer-empty p { color: var(--mid); font-size: 0.9rem; line-height: 1.65; margin-bottom: 20px; }
+    .drawer-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(59,85,109,0.08); animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;} }
+    .drawer-item:last-child { border-bottom: none; }
+    .drawer-item-icon { width: 42px; height: 42px; background: rgba(95,194,186,0.1); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .drawer-item-info { flex: 1; min-width: 0; }
+    .drawer-item-tag { font-size: 0.65rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+    .drawer-item-name { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--dark-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+    .drawer-item-price { font-size: 0.78rem; color: var(--mid); margin-top: 1px; }
+    .drawer-item-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .dqty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(59,85,109,0.2); background: var(--white); color: var(--dark-1); font-family: var(--font-title); font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+    .dqty-btn:hover { background: var(--accent); color: var(--dark-1); border-color: var(--accent); }
+    .dqty-num { font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; min-width: 18px; text-align: center; }
+    .drawer-del { background: none; border: none; cursor: pointer; color: rgba(59,85,109,0.35); padding: 4px 6px; border-radius: 6px; transition: var(--transition); font-size: 0.85rem; }
+    .drawer-del:hover { color: #e74c3c; background: rgba(231,76,60,0.08); }
+    .drawer-footer { padding: 18px 24px 20px; border-top: 1px solid rgba(59,85,109,0.1); background: var(--gray-light); flex-shrink: 0; }
+    .drawer-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .drawer-total .lbl { font-family: var(--font-title); font-size: 0.85rem; color: var(--mid); font-weight: 600; }
+    .drawer-total .amt { font-family: var(--font-title); font-size: 1.5rem; font-weight: 800; color: var(--dark-1); }
+    .drawer-note { font-size: 0.73rem; color: var(--mid); line-height: 1.55; margin-bottom: 14px; padding: 10px; background: rgba(95,194,186,0.07); border-radius: 8px; border-left: 2px solid rgba(95,194,186,0.3); }
+    .drawer-cta { width: 100%; justify-content: center; margin-bottom: 8px; }
+    .drawer-clear { background: none; border: none; color: rgba(59,85,109,0.55); font-size: 0.78rem; cursor: pointer; font-family: var(--font-body); text-align: center; width: 100%; padding: 4px; transition: var(--transition); }
+    .drawer-clear:hover { color: #e74c3c; }
+    /* ===== FAB ===== */
+    .fab-group { position: fixed; bottom: 28px; right: 28px; z-index: 1500; display: flex; flex-direction: row; align-items: center; gap: 10px; }
+    .fab-cart { width: 54px; height: 54px; border-radius: 50%; background: var(--dark-1); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(11,22,44,0.5); transition: var(--transition); color: var(--white); position: relative; flex-shrink: 0; }
+    .fab-cart:hover { background: var(--dark-2); box-shadow: 0 8px 32px rgba(11,22,44,0.7); transform: scale(1.08); }
+    .fab-cart .fab-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: var(--dark-1); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-title); font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .fab-cart .fab-badge.hidden { display: none; }
+    .fab-contact { display: flex; align-items: center; gap: 9px; background: var(--accent); color: var(--dark-1); padding: 13px 20px; border-radius: var(--radius-btn); font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; box-shadow: 0 8px 24px rgba(95,194,186,0.4); cursor: pointer; border: none; transition: var(--transition); white-space: nowrap; animation: pulse-fab 3s ease-in-out infinite; }
+    .fab-contact:hover { background: var(--accent-light); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(95,194,186,0.5); animation: none; }
+    @keyframes pulse-fab { 0%,100%{box-shadow:0 8px 24px rgba(95,194,186,0.4);}50%{box-shadow:0 8px 36px rgba(95,194,186,0.65);} }
+    /* ===== QUICK CONTACT MODAL ===== */
+    .qc-modal { position: fixed; bottom: 96px; right: 28px; width: 360px; max-width: calc(100vw - 40px); background: var(--white); border-radius: 20px; box-shadow: 0 32px 80px rgba(11,22,44,0.3),0 0 0 1px rgba(59,85,109,0.1); z-index: 2500; overflow: hidden; transform: translateY(16px) scale(0.96); opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s ease; }
+    .qc-modal.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .qc-head { background: var(--dark-1); padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .qc-head-text h4 { font-family: var(--font-title); font-size: 0.97rem; font-weight: 700; color: var(--white); }
+    .qc-head-text p { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .qc-close-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.18); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); font-size: 1rem; transition: var(--transition); flex-shrink: 0; }
+    .qc-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .qc-body { padding: 18px 20px; }
+    .qc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .qc-field { margin-bottom: 12px; }
+    .qc-field label { display: block; font-family: var(--font-title); font-size: 0.75rem; font-weight: 600; color: var(--dark-1); margin-bottom: 5px; }
+    .qc-field input,.qc-field textarea,.qc-field select { width: 100%; padding: 9px 13px; border: 1.5px solid rgba(59,85,109,0.18); border-radius: 9px; font-family: var(--font-body); font-size: 0.87rem; color: var(--dark-1); background: var(--gray-light); outline: none; transition: var(--transition); }
+    .qc-field input:focus,.qc-field textarea:focus,.qc-field select:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 3px rgba(95,194,186,0.1); }
+    .qc-field input.qc-err,.qc-field textarea.qc-err { border-color: #e74c3c; }
+    .qc-field textarea { resize: none; height: 72px; }
+    .qc-submit { width: 100%; justify-content: center; padding: 11px; font-size: 0.9rem; }
+    .qc-success { display: none; text-align: center; padding: 20px 16px 8px; }
+    .qc-success.visible { display: block; }
+    .qc-success-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .qc-success h5 { font-family: var(--font-title); font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--dark-1); }
+    .qc-success p { font-size: 0.83rem; color: var(--mid); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header" id="header">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo"><img src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol"></a>
+    <nav class="main-nav">
+      <a href="index.html">Accueil</a>
+      <a href="services.html" class="active">Services</a>
+      <a href="pourquoi-nous.html">Pourquoi nous</a>
+      <a href="panier.html">Panier</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" id="cartDrawerTrigger" aria-label="Ouvrir le panier">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-count hidden" id="cartCount">0</span>
+      </button>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Accueil</a>
+  <a href="services.html">Services</a>
+  <a href="pourquoi-nous.html">Pourquoi nous</a>
+  <a href="panier.html">Panier</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" style="color:var(--accent);margin-top:8px;">Prendre contact →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroWebGL"></canvas>
+  <div class="container">
+    <div class="hero-content">
+      <div class="section-label">Mes services</div>
+      <h1 class="title-xl">Des prestations <span class="accent-text">qui changent la donne</span></h1>
+      <p>CV, coaching, bilan de compétences, LinkedIn — chaque service est conçu pour vous donner un avantage réel sur le marché de l'emploi suisse.</p>
+      <div class="hero-offer">
+        <span>🎁</span>
+        Premier échange téléphonique ou physique de <strong style="color:var(--white);margin-left:4px;">30 minutes offert</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="container">
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-target="cv">CV & Candidature</button>
+      <button class="tab-btn" data-target="coaching">Coaching</button>
+      <button class="tab-btn" data-target="bilan">Bilan de compétences</button>
+      <button class="tab-btn" data-target="linkedin">LinkedIn</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services-section">
+  <div class="container">
+
+    <!-- CV -->
+    <div class="services-category active" id="cat-cv">
+      <div class="category-header">
+        <h2>CV & Candidature</h2>
+        <p>De la diffusion de votre CV à l'accompagnement complet incluant préparation aux entretiens.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="service-tag">CV</span>
+          <h3>Diffusion de votre CV auprès de partenaires spécialisés</h3>
+          <p class="service-desc">Mise en visibilité de votre CV auprès d'un réseau de partenaires du recrutement.</p>
+          <ul class="service-bullets">
+            <li>Partage auprès de 30+ partenaires spécialisés</li>
+            <li>Visibilité directe auprès de recruteurs et entreprises</li>
+            <li>Partenaires principalement à Genève et Vaud</li>
+            <li>Agences de placement et entreprises partenaires</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">200 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'cv-1',titre:'Diffusion de votre CV',categorie:'CV',prix:200})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card">
+          <span class="service-tag">CV</span>
+          <h3>Création de CV et lettre de motivation</h3>
+          <p class="service-desc">Rédaction professionnelle de vos documents de candidature pour maximiser leur impact.</p>
+          <ul class="service-bullets">
+            <li>Prise en charge complète de la création du CV</li>
+            <li>Rédaction de la lettre de motivation</li>
+            <li>Mise en forme professionnelle et impactante</li>
+            <li>Renforcement de l'efficacité de votre candidature</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">300 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'cv-2',titre:'Création de CV et lettre de motivation',categorie:'CV',prix:300})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card">
+          <span class="service-tag">CV</span>
+          <h3>Forfait d'accompagnement partiel</h3>
+          <p class="service-desc">Accompagnement personnalisé pour améliorer vos documents de candidature et votre présentation.</p>
+          <ul class="service-bullets">
+            <li>Rédaction du CV et de la lettre de motivation ensemble</li>
+            <li>Travail réalisé en collaboration avec vous</li>
+            <li>Conseils personnalisés pour affiner votre pitch</li>
+            <li>Total de 3 heures d'accompagnement</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">600 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'cv-3',titre:'Forfait accompagnement partiel',categorie:'CV',prix:600})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card" style="border-color:rgba(95,194,186,0.3);position:relative;">
+          <div style="position:absolute;top:-12px;right:24px;background:var(--accent);color:var(--dark-1);font-family:var(--font-title);font-size:0.72rem;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:0.04em;">RECOMMANDÉ</div>
+          <span class="service-tag">CV</span>
+          <h3>Forfait d'accompagnement complet</h3>
+          <p class="service-desc">Accompagnement approfondi pour structurer votre candidature et vous préparer aux entretiens.</p>
+          <ul class="service-bullets">
+            <li>Aide à la rédaction du CV et de la lettre de motivation</li>
+            <li>Amélioration de votre pitch personnel</li>
+            <li>Préparation approfondie aux entretiens</li>
+            <li>Simulations d'entretien réalistes</li>
+            <li>Total de 5 heures de coaching</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">1000 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'cv-4',titre:'Forfait accompagnement complet',categorie:'CV',prix:1000})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COACHING -->
+    <div class="services-category" id="cat-coaching">
+      <div class="category-header">
+        <h2>Coaching professionnel</h2>
+        <p>Un accompagnement intensif pour booster votre recherche d'emploi ou votre reconversion.</p>
+      </div>
+      <div class="services-grid" style="grid-template-columns:1fr;">
+        <div class="service-card" style="max-width:640px;border-color:rgba(95,194,186,0.3);">
+          <span class="service-tag">Coaching</span>
+          <h3>Coaching complet</h3>
+          <p class="service-desc">Accompagnement intensif et complet tout au long de votre parcours de recherche d'emploi ou de repositionnement professionnel.</p>
+          <ul class="service-bullets">
+            <li>Rédaction complète du CV et de la lettre de motivation</li>
+            <li>Assistance directe à la création de vos documents</li>
+            <li>Conseils pour améliorer votre pitch personnel</li>
+            <li>Préparation intensive aux entretiens avec simulations</li>
+            <li>Accès à mon réseau professionnel en Suisse</li>
+            <li>Total de 10 heures de coaching</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">1800 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'coaching-1',titre:'Coaching complet',categorie:'Coaching',prix:1800})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILAN -->
+    <div class="services-category" id="cat-bilan">
+      <div class="category-header">
+        <h2>Bilan de compétences</h2>
+        <p>Analysez votre personnalité et votre parcours pour redéfinir votre projet professionnel avec clarté.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="service-tag">Bilan</span>
+          <h3>Analyse personnelle</h3>
+          <p class="service-desc">Découverte des potentiels et traits de personnalité et leur impact sur votre parcours.</p>
+          <ul class="service-bullets">
+            <li>Analyse des traits de personnalité</li>
+            <li>Mise en lumière de vos forces et axes d'amélioration</li>
+            <li>Proposition de métiers adaptés à votre savoir-être</li>
+            <li>Restitution avec graphiques visuels</li>
+            <li>3 heures d'analyse de votre dossier</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">600 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'bilan-1',titre:'Analyse personnelle',categorie:'Bilan de compétences',prix:600})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card">
+          <span class="service-tag">Bilan</span>
+          <h3>Analyse professionnelle</h3>
+          <p class="service-desc">Évaluation de votre parcours professionnel pour identifier vos compétences clés.</p>
+          <ul class="service-bullets">
+            <li>Analyse de votre parcours professionnel complet</li>
+            <li>Mise en avant de vos réussites et compétences clés</li>
+            <li>Recommandations de métiers stratégiques</li>
+            <li>Plan de développement selon vos aspirations</li>
+            <li>3 heures d'analyse de votre dossier</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">600 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'bilan-2',titre:'Analyse professionnelle',categorie:'Bilan de compétences',prix:600})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card" style="border-color:rgba(95,194,186,0.3);position:relative;">
+          <div style="position:absolute;top:-12px;right:24px;background:var(--accent);color:var(--dark-1);font-family:var(--font-title);font-size:0.72rem;font-weight:700;padding:4px 14px;border-radius:20px;">ÉCONOMIE 200 CHF</div>
+          <span class="service-tag">Bilan</span>
+          <h3>Offre spéciale — Pack 2 prestations</h3>
+          <p class="service-desc">Tarif préférentiel si vous choisissez les deux analyses du bilan de compétences.</p>
+          <ul class="service-bullets">
+            <li>Inclut l'analyse personnelle complète</li>
+            <li>Inclut l'analyse professionnelle complète</li>
+            <li>Tarif préférentiel au lieu de 1200 CHF séparément</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">1000 <sub>CHF TTC</sub> <span style="font-size:0.8rem;color:var(--mid);text-decoration:line-through;margin-left:8px;">1200</span></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'bilan-3',titre:'Pack Bilan — Analyse personnelle + professionnelle',categorie:'Bilan de compétences',prix:1000})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card">
+          <span class="service-tag">Bilan</span>
+          <h3>Bilan de compétences sur mesure</h3>
+          <p class="service-desc">Accompagnement complet et personnalisé selon la profondeur de l'analyse et la complexité de votre situation.</p>
+          <ul class="service-bullets">
+            <li>Bilan conçu sur mesure selon vos besoins</li>
+            <li>15 à 20 heures d'accompagnement</li>
+            <li>Séances individuelles et exercices pratiques</li>
+            <li>Suivi complet de votre évolution</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price" style="font-size:1.4rem;">2000–4000 <sub>CHF TTC</sub></div>
+            <a href="contact.html" class="btn btn-outline" style="width:100%;justify-content:center;">Demander un devis</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINKEDIN -->
+    <div class="services-category" id="cat-linkedin">
+      <div class="category-header">
+        <h2>Optimisation LinkedIn</h2>
+        <p>Transformez votre profil LinkedIn en outil de prospection efficace sur le marché suisse.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="service-tag">LinkedIn</span>
+          <h3>Formule 1 — Audit et plan d'optimisation + photo pro</h3>
+          <p class="service-desc">Audit de votre profil LinkedIn avec recommandations concrètes et photo professionnelle.</p>
+          <ul class="service-bullets">
+            <li>Questionnaire initial ciblé</li>
+            <li>Audit complet avec rapport PDF personnalisé</li>
+            <li>Recommandations optimisées pour le marché suisse</li>
+            <li>Guide bannière et visuels</li>
+            <li>Restitution en visio de 30 minutes</li>
+            <li>1 séance photo express (dont CHF 80 pour la photo)</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">300 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'li-1',titre:'LinkedIn Formule 1 — Audit + photo pro',categorie:'LinkedIn',prix:300})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+        <div class="service-card" style="border-color:rgba(95,194,186,0.3);position:relative;">
+          <div style="position:absolute;top:-12px;right:24px;background:var(--accent);color:var(--dark-1);font-family:var(--font-title);font-size:0.72rem;font-weight:700;padding:4px 14px;border-radius:20px;">COMPLET</div>
+          <span class="service-tag">LinkedIn</span>
+          <h3>Formule 2 — Refonte complète + photo pro</h3>
+          <p class="service-desc">Refonte éditoriale complète avec scripts de prise de contact et accompagnement à la mise en ligne.</p>
+          <ul class="service-bullets">
+            <li>Entretien approfondi de 45–60 min</li>
+            <li>Rewriting complet du titre, "À propos" et 2–3 expériences</li>
+            <li>15–25 compétences + plan d'endorsements</li>
+            <li>Pack de 3 scripts LinkedIn</li>
+            <li>Coaching au paramétrage (45–60 min)</li>
+            <li>Feuille de route 30 jours + suivi J+30</li>
+            <li>1 séance photo express (dont CHF 80 pour la photo)</li>
+          </ul>
+          <div class="service-footer">
+            <div class="service-price">570 <sub>CHF TTC</sub></div>
+            <button class="btn btn-cart" onclick="addToCart({id:'li-2',titre:'LinkedIn Formule 2 — Refonte complète + photo pro',categorie:'LinkedIn',prix:570})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- REASSURANCE -->
+<section class="reassurance">
+  <div class="container">
+    <div class="reassurance-inner">
+      <div>
+        <div class="section-label">Ils nous font confiance</div>
+        <h2 class="title-lg">Des résultats <span class="accent-text">qui parlent d'eux-mêmes</span></h2>
+        <p style="color:var(--mid);font-size:0.95rem;line-height:1.75;margin:16px 0 32px;">Chaque accompagnement est unique. Cathy Gidrol s'adapte à votre situation, vos objectifs et le marché de l'emploi suisse pour vous offrir les meilleures chances de réussite.</p>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div style="text-align:center;padding:20px;background:var(--white);border-radius:16px;box-shadow:var(--shadow);min-width:100px;">
+            <div style="font-family:var(--font-title);font-size:2rem;font-weight:800;color:var(--accent);">30+</div>
+            <div style="font-size:0.78rem;color:var(--mid);">Partenaires</div>
+          </div>
+          <div style="text-align:center;padding:20px;background:var(--white);border-radius:16px;box-shadow:var(--shadow);min-width:100px;">
+            <div style="font-family:var(--font-title);font-size:2rem;font-weight:800;color:var(--accent);">100%</div>
+            <div style="font-size:0.78rem;color:var(--mid);">Sur mesure</div>
+          </div>
+          <div style="text-align:center;padding:20px;background:var(--white);border-radius:16px;box-shadow:var(--shadow);min-width:100px;">
+            <div style="font-family:var(--font-title);font-size:2rem;font-weight:800;color:var(--accent);">5★</div>
+            <div style="font-size:0.78rem;color:var(--mid);">Avis clients</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">« Son accompagnement a été d'une qualité exceptionnelle. Cathy se distingue par ses valeurs humaines profondes, alliant écoute attentive et professionnalisme rigoureux. Elle sait créer un environnement de confiance, essentiel pour explorer et valoriser ses compétences. »</p>
+        <div class="testi-author">
+          <img class="testi-photo" src="./temoignages/Mathieu-Lhermitte-scaled.jpg" alt="Mathieu Lhermitte">
+          <div>
+            <div class="testi-name">Mathieu Lhermitte</div>
+            <div class="testi-role">Chef de projet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="cta-band-bg"></div>
+  <div class="container">
+    <div class="cta-band-inner">
+      <h2>Vous ne savez pas quel service choisir ?</h2>
+      <p>Le premier échange de 30 min est offert. Nous définissons ensemble la meilleure approche pour votre situation.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="contact.html" class="btn btn-dark">Réserver mon échange gratuit</a>
+        <a href="panier.html" class="btn btn-outline">Voir mon panier</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="footer-logo" src="./cathy-gidrol-logo-white.png" alt="Cathy Gidrol">
+        <p>Conseillère en insertion professionnelle basée en Suisse. Accompagnement humain, concret et orienté résultats.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pourquoi-nous.html">Pourquoi nous</a></li>
+          <li><a href="panier.html">Panier</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">CV & Lettre</a></li>
+          <li><a href="services.html">Coaching complet</a></li>
+          <li><a href="services.html">Bilan de compétences</a></li>
+          <li><a href="services.html">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-contact">
+        <h4>Contact</h4>
+        <p>📍 Genève & canton de Vaud</p>
+        <p>🇨🇭 Suisse</p>
+        <p class="accent-c">Premier échange gratuit de 30 min</p>
+        <a href="contact.html" class="btn btn-outline" style="margin-top:16px;padding:10px 20px;font-size:0.85rem;">Nous contacter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Cathy Gidrol — Tous droits réservés</p>
+      <p>Insertion professionnelle · Genève · Vaud · Suisse</p>
+    </div>
+    <div class="footer-watermark">CG</div>
+  </div>
+</footer>
+
+<!-- ===== SCROLL PROGRESS ===== -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <div class="drawer-header-left">
+      <h3>Mon panier</h3>
+      <span class="drawer-header-badge" id="drawerBadge">0</span>
+    </div>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div class="drawer-empty" id="drawerEmpty">
+      <div class="drawer-empty-icon">🛒</div>
+      <p>Votre panier est vide.<br>Découvrez mes services et ajoutez vos prestations.</p>
+      <a href="services.html" class="btn btn-primary" style="font-size:0.88rem;padding:10px 22px;">Voir les services</a>
+    </div>
+  </div>
+  <div class="drawer-footer" id="drawerFooter" style="display:none;">
+    <div class="drawer-total">
+      <span class="lbl">Total estimé</span>
+      <span class="amt" id="drawerTotal">0 CHF</span>
+    </div>
+    <p class="drawer-note">💡 Aucun paiement en ligne — ce panier prépare notre échange.</p>
+    <a href="contact.html" class="btn btn-primary drawer-cta">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.69 12 19.79 19.79 0 011.61 3.18 2 2 0 013.6 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.64a16 16 0 006.29 6.29l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Prendre contact
+    </a>
+    <a href="panier.html" style="display:block;text-align:center;font-family:var(--font-title);font-size:0.8rem;color:var(--mid);margin-top:6px;text-decoration:underline;">Voir le panier complet</a>
+    <button class="drawer-clear" id="drawerClear">Vider le panier</button>
+  </div>
+</div>
+
+<!-- ===== FAB GROUP ===== -->
+<div class="fab-group" id="fabGroup">
+  <button class="fab-contact" id="fabContact">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Contact rapide
+  </button>
+  <button class="fab-cart" id="fabCart" aria-label="Panier">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <span class="fab-badge hidden" id="fabBadge">0</span>
+  </button>
+</div>
+
+<!-- ===== QUICK CONTACT MODAL ===== -->
+<div class="qc-modal" id="qcModal">
+  <div class="qc-head">
+    <div class="qc-head-text">
+      <h4>Contact rapide</h4>
+      <p>🎁 Premier échange de 30 min offert</p>
+    </div>
+    <button class="qc-close-btn" id="qcClose">✕</button>
+  </div>
+  <div class="qc-body">
+    <form id="qcForm" novalidate>
+      <div class="qc-row">
+        <div class="qc-field"><label>Prénom *</label><input type="text" id="qcPrenom" placeholder="Votre prénom" autocomplete="given-name"></div>
+        <div class="qc-field"><label>Email *</label><input type="email" id="qcEmail" placeholder="votre@email.com" autocomplete="email"></div>
+      </div>
+      <div class="qc-field"><label>Service souhaité</label><select id="qcService"><option value="">— Sélectionner —</option><option>CV & Lettre de motivation</option><option>Coaching complet</option><option>Bilan de compétences</option><option>LinkedIn</option><option>Je ne sais pas encore</option></select></div>
+      <div class="qc-field"><label>Message rapide *</label><textarea id="qcMessage" placeholder="Décrivez brièvement votre situation..."></textarea></div>
+      <button type="submit" class="btn btn-primary qc-submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Envoyer</button>
+    </form>
+    <div class="qc-success" id="qcSuccess"><div class="qc-success-icon">✅</div><h5>Message envoyé !</h5><p>Je vous recontacte très vite pour fixer notre premier échange offert.</p></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Ajouté au panier</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* CART — addToCart called by service card buttons */
+  function addToCart(item) {
+    const items = cartGet();
+    const idx = items.findIndex(i => i.id === item.id);
+    if (idx >= 0) { items[idx].quantite = (items[idx].quantite || 1) + 1; }
+    else { items.push({ ...item, quantite: 1 }); }
+    cartSave(items); updateAllBadges(); showToast(item.titre);
+  }
+  function showToast(titre) {
+    const t = document.getElementById('toast');
+    t.textContent = `✓ "${titre.substring(0,30)}..." ajouté au panier`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  /* TABS */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.services-category').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = document.getElementById('cat-' + target);
+      if (cat) {
+        cat.classList.add('active');
+        gsap.from(cat.querySelectorAll('.service-card'), { y: 40, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out' });
+      }
+    });
+  });
+
+  /* GSAP */
+  gsap.from('.site-header', { y: -80, opacity: 0, duration: 0.8, ease: 'power3.out' });
+  gsap.from('.hero-content > *', { y: 40, opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out', delay: 0.3 });
+  gsap.utils.toArray('.service-card').forEach((el, i) => {
+    gsap.from(el, { y: 50, opacity: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true }, delay: (i % 3) * 0.07 });
+  });
+  gsap.from('.reassurance-inner > *', { y: 40, opacity: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out', scrollTrigger: { trigger: '.reassurance-inner', start: 'top 80%', once: true } });
+
+  /* ===== CART + DRAWER ===== */
+  const catIcons = {'CV':'📄','Coaching':'🎯','Bilan de compétences':'🔍','LinkedIn':'💼'};
+  function cartGet() { try { return JSON.parse(localStorage.getItem('cg_cart'))||[]; } catch(e){ return []; } }
+  function cartSave(items) { localStorage.setItem('cg_cart', JSON.stringify(items)); }
+  function cartCount() { return cartGet().reduce((s,i)=>s+(i.quantite||1),0); }
+  function updateAllBadges() {
+    const n=cartCount();
+    ['cartCount','drawerBadge','fabBadge'].forEach(id=>{
+      const el=document.getElementById(id); if(!el) return;
+      el.textContent=n;
+      el.classList.toggle('hidden',n===0);
+      if(id==='drawerBadge') el.style.display=n>0?'':'none';
+    });
+  }
+  updateAllBadges();
+  function renderDrawer() {
+    const items=cartGet(), body=document.getElementById('drawerBody'), footer=document.getElementById('drawerFooter'), empty=document.getElementById('drawerEmpty');
+    if(!body) return;
+    body.querySelectorAll('.drawer-item').forEach(el=>el.remove());
+    if(items.length===0){ if(empty) empty.style.display=''; if(footer) footer.style.display='none'; updateAllBadges(); return; }
+    if(empty) empty.style.display='none'; if(footer) footer.style.display='';
+    let total=0;
+    items.forEach(item=>{ const qty=item.quantite||1; total+=item.prix*qty;
+      const div=document.createElement('div'); div.className='drawer-item';
+      div.innerHTML=`<div class="drawer-item-icon">${catIcons[item.categorie]||'📋'}</div><div class="drawer-item-info"><div class="drawer-item-tag">${item.categorie}</div><div class="drawer-item-name">${item.titre}</div><div class="drawer-item-price">${item.prix} CHF / unité</div></div><div class="drawer-item-actions"><button class="dqty-btn" onclick="drawerQty('${item.id}',-1)">−</button><span class="dqty-num">${qty}</span><button class="dqty-btn" onclick="drawerQty('${item.id}',1)">+</button><button class="drawer-del" onclick="drawerRemove('${item.id}')" title="Supprimer">🗑</button></div>`;
+      body.appendChild(div); });
+    const totalEl=document.getElementById('drawerTotal');
+    if(totalEl){ const prev=parseInt(totalEl.textContent)||0; gsap.to({val:prev},{val:total,duration:0.5,ease:'power2.out',onUpdate:function(){totalEl.textContent=Math.round(this.targets()[0].val)+' CHF';}}); }
+    updateAllBadges();
+  }
+  function drawerQty(id,delta){ let items=cartGet(); const idx=items.findIndex(i=>i.id===id); if(idx<0)return; items[idx].quantite=Math.max(1,(items[idx].quantite||1)+delta); cartSave(items); renderDrawer(); }
+  function drawerRemove(id){ cartSave(cartGet().filter(i=>i.id!==id)); renderDrawer(); }
+  function openDrawer(){ renderDrawer(); document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeDrawer(){ document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); document.body.style.overflow=''; }
+  document.getElementById('cartDrawerTrigger').addEventListener('click',openDrawer);
+  document.getElementById('fabCart').addEventListener('click',openDrawer);
+  document.getElementById('drawerClose').addEventListener('click',closeDrawer);
+  document.getElementById('cartOverlay').addEventListener('click',closeDrawer);
+  document.getElementById('drawerClear').addEventListener('click',()=>{ if(confirm('Vider le panier ?')){ cartSave([]); renderDrawer(); } });
+  /* ===== QUICK CONTACT MODAL ===== */
+  const qcModal=document.getElementById('qcModal');
+  function openQC(){ qcModal.classList.add('open'); }
+  function closeQC(){ qcModal.classList.remove('open'); }
+  document.getElementById('fabContact').addEventListener('click',openQC);
+  document.getElementById('qcClose').addEventListener('click',closeQC);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrawer(); closeQC(); } });
+  document.getElementById('qcForm').addEventListener('submit',function(e){ e.preventDefault();
+    const prenom=document.getElementById('qcPrenom').value.trim(), email=document.getElementById('qcEmail').value.trim(), msg=document.getElementById('qcMessage').value.trim(), rx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let ok=true; [document.getElementById('qcPrenom'),document.getElementById('qcEmail'),document.getElementById('qcMessage')].forEach(el=>el.classList.remove('qc-err'));
+    if(!prenom){document.getElementById('qcPrenom').classList.add('qc-err');ok=false;}
+    if(!email||!rx.test(email)){document.getElementById('qcEmail').classList.add('qc-err');ok=false;}
+    if(!msg){document.getElementById('qcMessage').classList.add('qc-err');ok=false;}
+    if(!ok) return;
+    setTimeout(()=>{ document.getElementById('qcForm').style.display='none'; const s=document.getElementById('qcSuccess'); s.classList.add('visible'); gsap.from(s.children,{y:16,opacity:0,duration:0.5,stagger:0.1,ease:'power3.out'}); setTimeout(closeQC,3500); },800);
+  });
+  /* ===== SCROLL PROGRESS ===== */
+  const progressBar=document.getElementById('scrollProgress');
+  window.addEventListener('scroll',()=>{ const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100; if(progressBar) progressBar.style.width=pct+'%'; },{passive:true});
+  /* ===== HEADER SCROLL + BURGER ===== */
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+  document.getElementById('burger').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('open'));
+</script>
+
+<script>
+/* ===== THREE.JS HERO LIQUID GRADIENT ===== */
+(function() {
+  if (typeof THREE === 'undefined') return;
+  const canvas = document.getElementById('heroWebGL');
+  const hero   = canvas.closest('.hero');
+  class TouchTexture {
+    constructor() { this.size=64; this.maxAge=100; this.radius=0.18; this.trail=[]; this._init(); }
+    _init() {
+      this.cvs=document.createElement('canvas'); this.cvs.width=this.cvs.height=this.size;
+      this.ctx=this.cvs.getContext('2d'); this.ctx.fillStyle='black';
+      this.ctx.fillRect(0,0,this.size,this.size); this.texture=new THREE.CanvasTexture(this.cvs);
+    }
+    addTouch(pt) { this.trail.push({x:pt.x,y:pt.y,age:0}); }
+    update() {
+      this.ctx.fillStyle='rgba(0,0,0,0.05)'; this.ctx.fillRect(0,0,this.size,this.size);
+      this.trail=this.trail.filter(p=>p.age<=this.maxAge);
+      this.trail.forEach(p=>{ p.age++; const i=Math.pow(1-p.age/this.maxAge,1.5);
+        this.ctx.beginPath(); this.ctx.arc(p.x*this.size,p.y*this.size,this.size*this.radius,0,Math.PI*2);
+        this.ctx.fillStyle=`rgba(255,255,255,${i*0.55})`; this.ctx.fill(); });
+      this.texture.needsUpdate=true;
+    }
+  }
+  const vertexShader=`varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position,1.0);}`;
+  const fragmentShader=`
+    precision mediump float;
+    uniform float uTime; uniform vec2 uRes; uniform sampler2D uTouch; varying vec2 vUv;
+    vec3 cNavy=vec3(0.043,0.086,0.173); vec3 cMid=vec3(0.110,0.161,0.259); vec3 cTeal=vec3(0.373,0.761,0.729);
+    float blob(vec2 uv,vec2 c,float r){return r/(dot(uv-c,uv-c)+0.001);}
+    void main(){
+      vec2 uv=vUv; float t=uTime*0.22; float f=0.0;
+      f+=blob(uv,vec2(0.50+0.30*sin(t*0.70),0.50+0.25*cos(t*0.50)),0.018);
+      f+=blob(uv,vec2(0.20+0.18*cos(t*0.60),0.30+0.22*sin(t*0.80)),0.013);
+      f+=blob(uv,vec2(0.75+0.17*sin(t*0.55+1.5),0.65+0.20*cos(t*0.70)),0.015);
+      f+=blob(uv,vec2(0.15+0.12*cos(t*0.90+0.5),0.75+0.16*sin(t*0.40)),0.012);
+      f+=blob(uv,vec2(0.80+0.13*sin(t*0.65+2.0),0.25+0.18*cos(t*0.75)),0.013);
+      f+=blob(uv,vec2(0.45+0.22*cos(t*0.45+1.0),0.90+0.08*sin(t*1.20)),0.014);
+      f+=blob(uv,vec2(0.60+0.20*sin(t*0.80+0.8),0.15+0.12*cos(t*0.55)),0.011);
+      f+=blob(uv,vec2(0.35+0.15*cos(t*0.50+2.5),0.55+0.20*sin(t*0.60+1.0)),0.010);
+      f+=blob(uv,vec2(0.88+0.08*sin(t*1.10+0.3),0.50+0.25*cos(t*0.45+0.7)),0.009);
+      f+=blob(uv,vec2(0.08+0.07*cos(t*0.75+1.2),0.45+0.18*sin(t*0.85)),0.009);
+      f+=blob(uv,vec2(0.55+0.18*sin(t*0.60+3.0),0.38+0.15*cos(t*0.95+0.5)),0.010);
+      f+=blob(uv,vec2(0.30+0.20*cos(t*0.40+0.9),0.80+0.10*sin(t*0.70+2.0)),0.011);
+      float lo=smoothstep(0.35,0.90,f); float hi=smoothstep(0.90,2.00,f);
+      vec3 col=mix(cNavy,cMid,lo*0.7); col=mix(col,cTeal,hi*0.38);
+      col=mix(col,cNavy,0.35);
+      float touch=texture2D(uTouch,uv).r; col+=touch*0.08*cTeal;
+      float vig=1.0-smoothstep(0.30,0.85,length(uv-vec2(0.5)));
+      col=mix(cNavy*0.65,col,vig*0.65+0.35);
+      gl_FragColor=vec4(col,1.0);
+    }`;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  const scene=new THREE.Scene(), camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1), touch=new TouchTexture();
+  const uniforms={uTime:{value:0},uRes:{value:new THREE.Vector2()},uTouch:{value:touch.texture}};
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({vertexShader,fragmentShader,uniforms})));
+  function resize(){const w=hero.clientWidth,h=hero.clientHeight;renderer.setSize(w,h,false);uniforms.uRes.value.set(w,h);}
+  resize(); window.addEventListener('resize',resize);
+  hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();touch.addTouch({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height});});
+  hero.addEventListener('touchmove',e=>{const r=hero.getBoundingClientRect();Array.from(e.touches).forEach(t=>touch.addTouch({x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height}));},{passive:true});
+  (function loop(){requestAnimationFrame(loop);uniforms.uTime.value+=0.016;touch.update();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>
