@@ -239,6 +239,7 @@
       background: var(--white); border-radius: var(--radius-card);
       padding: 28px; box-shadow: var(--shadow); border: 1px solid rgba(59,85,109,0.1);
       transition: var(--transition); position: relative; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
     }
     .benefit-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -250,10 +251,22 @@
     .benefit-icon {
       width: 52px; height: 52px; background: rgba(95,194,186,0.1);
       border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 20px;
+      font-size: 1.5rem; margin-bottom: 16px;
     }
-    .benefit-card h3 { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .benefit-card h3 { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; margin-bottom: 0; }
     .benefit-card p { font-size: 0.88rem; color: var(--mid); line-height: 1.65; }
+
+    /* Hover-reveal text — desktop only (pointer devices) */
+    @media (hover: hover) {
+      .benefit-card { min-height: 160px; justify-content: center; }
+      .benefit-card p {
+        opacity: 0; max-height: 0; overflow: hidden; margin: 0;
+        transition: opacity 0.35s ease, max-height 0.4s ease, margin 0.3s ease;
+      }
+      .benefit-card:hover p {
+        opacity: 1; max-height: 220px; margin-top: 14px;
+      }
+    }
 
     /* ===== SERVICES PREVIEW ===== */
     .services-section { background: var(--gray-light); }
